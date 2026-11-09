@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Linux desktop host. It compiles the same app code as Ghostbox.App (Windows/Android) and shows the
+    same console page in a WebKitGTK window (Photino.NET). Only the platform pieces differ:
+    audio goes through PulseAudio/PipeWire, dialogs through GTK, settings into ~/.config.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Ghostbox.App</RootNamespace>
+    <AssemblyName>WhispersOfTheSpirit</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+    <Version>2.0</Version>
+    <Product>Whispers of the Spirit</Product>
+    <!-- The shared app files were written for MAUI; keep their existing warnings out of the way. -->
+    <NoWarn>$(NoWarn);CS0618;CS0414;CS0169;CS0649;CS1998;CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Shared app logic: everything in Ghostbox.App except the MAUI application/window start-up. -->
+    <Compile Include="..\Ghostbox.App\*.cs" Exclude="..\Ghostbox.App\App.xaml.cs;..\Ghostbox.App\AppShell.xaml.cs;..\Ghostbox.App\MauiProgram.cs" Link="Shared\%(Filename)%(Extension)" />
+    <!-- The same console page, wiring and Review deck as Windows/Android. -->
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\console.html" LogicalName="Whispers.Console.html" />
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\review-deck.js" LogicalName="Whispers.ReviewDeck.js" />
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\console-live.js" LogicalName="Whispers.ConsoleLive.js" />
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\console.offline.css" LogicalName="Whispers.Console.css" />
+    <None Include="..\assets\icon\whispers-of-the-spirit-512.png" Link="whispers-of-the-spirit.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Licenses\*" Link="Licenses\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\THIRD-PARTY.md" Link="Licenses\THIRD-PARTY.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Plain .NET build of the MAUI control classes: used only as app state, no MAUI window. -->
+    <PackageReference Include="Microsoft.Maui.Controls.Core" Version="10.0.110" />
+    <PackageReference Include="LibVLCSharp" Version="3.10.2" />
+    <PackageReference Include="Photino.NET" Version="4.0.16" />
+    <ProjectReference Include="..\Ghostbox.Core\Ghostbox.Core.csproj" />
+  </ItemGroup>
+</Project>

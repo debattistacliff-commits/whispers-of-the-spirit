@@ -1,0 +1,22 @@
+# Build output
+**/bin/
+**/obj/
+out/
+*.user
+.vs/
+# Packages are attached to GitHub Releases, not committed
+*.apk
+*.aab
+*.zip
+*.tar.gz
+# Signing keys and local secrets
+*.keystore
+*.jks
+*.pfx
+# Console style build tools
+Ghostbox.App/WebConsole/tools/node_modules/
+Ghostbox.App/WebConsole/tools/package-lock.json
+# Python
+__pycache__/
+*.pyc
+.venv/

@@ -1,0 +1,3 @@
+# Linux scripts must keep Unix line endings, even when checked out on Windows.
+*.sh text eol=lf
+Ghostbox.Linux/packaging/whispers-of-the-spirit text eol=lf

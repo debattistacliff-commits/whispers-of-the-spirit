@@ -1,0 +1,39 @@
+Whispers of the Spirit
+Copyright (c) 2026 debattistacliff-commits. All rights reserved.
+
+This software, its source code, its user interface, the "Whispers of the Spirit" name and logo,
+icons, artwork and documentation (together, "the Software") are the property of the copyright
+owner and are protected by copyright law.
+
+PERMITTED USE
+You may, free of charge:
+  1. download the official release packages published on this repository's Releases page;
+  2. install and use the Software on your own devices for personal, non-commercial purposes;
+  3. read the source code in this repository, and build it for your own personal use;
+  4. share a link to this repository or its Releases page.
+
+NOT PERMITTED WITHOUT PRIOR WRITTEN PERMISSION FROM THE COPYRIGHT OWNER
+  - selling, renting, sublicensing or otherwise distributing the Software or any part of it,
+    whether changed or unchanged, including re-uploading the release packages elsewhere;
+  - publishing modified versions, or using the source code, in other software or products;
+  - using the "Whispers of the Spirit" name, logo or artwork, or anything confusingly similar,
+    for other apps, products or services;
+  - removing or changing this notice, the copyright notices or the disclaimer.
+
+Viewing and forking this repository on GitHub is allowed as provided by GitHub's Terms of
+Service; that does not grant any further rights listed above.
+
+To ask for permission, open an issue on this repository.
+
+THIRD-PARTY COMPONENTS
+The Software uses third-party components (such as .NET MAUI, LibVLC/LibVLCSharp, NAudio,
+Photino.NET, fonts and icons) that remain under their own licences. Those licences apply to
+those components and are listed in THIRD-PARTY.md and the Licenses folder. Nothing in this
+notice limits the rights those licences give you.
+
+NO WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT OWNER BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR ITS USE. See also DISCLAIMER.md.

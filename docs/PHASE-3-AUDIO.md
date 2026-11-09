@@ -1,0 +1,11 @@
+# Phase 3 — audio processing
+
+Recorded-audio processing uses the already-installed free FFmpeg engine, with its Rubber Band support for pitch-preserving speed. It runs as a local background child process with argument arrays, cancellation and captured errors. It is not a paid/cloud service. The binary is not redistributed in this preview; the engine path can be configured in Review.
+
+Implemented controls: learned noise-profile FFT denoise and adaptive fallback; gentle/medium/strong presets; 50/60 Hz hum notch, depth and harmonics; hiss/static reduction; high/low-pass; click suppression; voice EQ/compression; explicitly labelled speech-band attenuation (not source separation); bass/treble, compressor, gain, normalize, limiter; mono/stereo output; pitch-preserving/tape speed 0.25–2×; selected-range reverse.
+
+Creative effects are separately grouped: synthetic white noise, short-reflection reverb, echo with delay/feedback, saturation, chop and sweeping filter. These start off. Creative processed preview/export requires an explicit opt-in. Live processed recording has a separate opt-in; raw reception is always recorded independently. Live effect changes are logged when a processed copy is captured. Original conversation audio remains unprocessed.
+
+Engine checks cover all filters, bypass, zero-amount bypass, speed duration/frequency at seven speeds, selected reverse, profile-prefix exclusion, MP3/FLAC decoding, stereo output, combined filters, source hashes and refusal to overwrite existing outputs. A real radio clip was processed from read-only source and remained hash-identical. This does not establish subjective speech improvement or absence of every artifact.
+
+Changed files: new Ghostbox.Core/Investigation.cs, AudioEffects.cs, PcmWaveWriter.cs, InvestigationControls.cs and effect binding in MainPage.xaml.cs; new Whispers.Checks project. Voice attenuation is EQ only. Reverb is a compact reflection approximation. Offline sweeping effect is a phaser; live sweeping uses the existing moving low-pass. Reverse is limited to ten minutes to bound memory use. Original import channels are retained in the original file; review previews are mono and exports use the chosen channel count.

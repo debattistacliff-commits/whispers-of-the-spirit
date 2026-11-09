@@ -1,0 +1,113 @@
+{
+  "silence": {
+    "duration": 3.0,
+    "speech_seconds": 0,
+    "segments": [],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio."
+  },
+  "white_noise": {
+    "duration": 3.0,
+    "speech_seconds": 0,
+    "segments": [],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio."
+  },
+  "tone_1khz": {
+    "duration": 3.0,
+    "speech_seconds": 0,
+    "segments": [],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio."
+  },
+  "synthetic_english": {
+    "duration": 5.0295,
+    "speech_seconds": 3.632,
+    "segments": [
+      {
+        "start": 0.028,
+        "end": 1.604
+      },
+      {
+        "start": 2.3,
+        "end": 4.356
+      }
+    ],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio."
+  },
+  "synthetic_italian": {
+    "duration": 5.3295,
+    "speech_seconds": 3.952,
+    "segments": [
+      {
+        "start": 0.092,
+        "end": 2.34
+      },
+      {
+        "start": 3.004,
+        "end": 4.708
+      }
+    ],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio."
+  },
+  "20261101-110409-885-7782c4-radio-raw.wav": {
+    "duration": 15.233229166666666,
+    "speech_seconds": 1.4559999999999995,
+    "segments": [
+      {
+        "start": 5.34,
+        "end": 6.212
+      },
+      {
+        "start": 8.924,
+        "end": 9.508
+      }
+    ],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio.",
+    "rms_dbfs": -27.9711356653706,
+    "peak_dbfs": -8.0368156777338,
+    "clipped_percent": 0.0
+  },
+  "20261101-105928-930-f29da1-radio-raw.wav": {
+    "duration": 15.10525,
+    "speech_seconds": 1.2640000000000007,
+    "segments": [
+      {
+        "start": 2.908,
+        "end": 3.428
+      },
+      {
+        "start": 6.044,
+        "end": 6.788
+      }
+    ],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio.",
+    "rms_dbfs": -28.19021455401458,
+    "peak_dbfs": -8.648985307663693,
+    "clipped_percent": 0.0
+  },
+  "20261101-105354-861-60eb0a-radio-raw.wav": {
+    "duration": 15.0625625,
+    "speech_seconds": 0,
+    "segments": [],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio.",
+    "rms_dbfs": -26.217082461890342,
+    "peak_dbfs": -9.964157008241443,
+    "clipped_percent": 0.0
+  },
+  "20261101-104420-400-45cd4e-radio-raw.wav": {
+    "duration": 15.105229166666666,
+    "speech_seconds": 1.1039999999999994,
+    "segments": [
+      {
+        "start": 0.54,
+        "end": 1.188
+      },
+      {
+        "start": 5.692,
+        "end": 6.148
+      }
+    ],
+    "warning": "Possible speech activity only. Noise, music and radio interference can cause false detections; faint or chopped speech can be missed. No speaker or source identity is determined. Verify against the raw audio.",
+    "rms_dbfs": -27.7023494055428,
+    "peak_dbfs": -8.14649680442237,
+    "clipped_percent": 0.0
+  }
+}

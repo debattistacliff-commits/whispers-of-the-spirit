@@ -1,0 +1,14 @@
+{
+  "name": "whispers-console-css",
+  "private": true,
+  "scripts": { "build": "node build.js" },
+  "devDependencies": {
+    "tailwindcss": "3.4.17",
+    "@tailwindcss/forms": "0.5.9",
+    "@tailwindcss/container-queries": "0.1.1",
+    "@fortawesome/fontawesome-free": "6.4.0",
+    "@fontsource/jetbrains-mono": "5.1.1",
+    "@fontsource/share-tech-mono": "5.1.1",
+    "@fontsource/space-grotesk": "5.1.1"
+  }
+}

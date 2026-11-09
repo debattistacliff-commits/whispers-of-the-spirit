@@ -1,0 +1,20 @@
+#!/bin/sh
+# Starts Whispers of the Spirit. Keep this file next to the "app" folder.
+here=$(dirname "$(readlink -f "$0")")
+
+missing=""
+has_lib() { ldconfig -p 2>/dev/null | grep -q "$1" || [ -e "/usr/lib/x86_64-linux-gnu/$1" ] || [ -e "/usr/lib64/$1" ] || [ -e "/usr/lib/$1" ]; }
+has_lib libwebkit2gtk-4.1.so.0 || missing="$missing\n  - WebKitGTK 4.1 (Ubuntu/Debian: libwebkit2gtk-4.1-0, Fedora: webkit2gtk4.1)"
+has_lib libpulse-simple.so.0 || missing="$missing\n  - PulseAudio client library (Ubuntu/Debian: libpulse0, Fedora: pulseaudio-libs)"
+if [ -n "$missing" ]; then
+  printf "Whispers of the Spirit cannot start. Please install:$missing\n\nSee README-LINUX.txt for one-line install commands.\n" >&2
+  command -v notify-send >/dev/null 2>&1 && notify-send "Whispers of the Spirit" "Missing system libraries. See README-LINUX.txt." 2>/dev/null
+  exit 1
+fi
+has_lib libvlc.so.5 || echo "Note: VLC library (libvlc5) not found: internet radio will not play. Everything else works." >&2
+command -v ffmpeg >/dev/null 2>&1 || echo "Note: ffmpeg not found: the Review deck slows down tape-style and clean-up is off." >&2
+
+# Avoids a blank window with some graphics drivers, virtual machines and WSL.
+: "${WEBKIT_DISABLE_DMABUF_RENDERER:=1}"
+export WEBKIT_DISABLE_DMABUF_RENDERER
+exec "$here/app/WhispersOfTheSpirit" "$@"

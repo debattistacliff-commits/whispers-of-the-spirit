@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WHISPERS OF THE SPIRIT // AETHERIC SDR TELEMETRY CONSOLE &amp; HARMONIC CHRONO-DECELERATOR</title>
+<!-- Retro Hardware, Bevels & Oscilloscope CRT Scanline FX -->
+<style data-purpose="military-crt-telemetry-engine">
+    body {
+      background-color: #03060a;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(14, 30, 48, 0.4) 0%, transparent 70%),
+        linear-gradient(rgba(56, 189, 248, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    /* CRT Primary Oscilloscope Screen */
+    .crt-screen-emerald {
+      position: relative;
+      background: radial-gradient(ellipse at center, #072314 0%, #021109 75%, #010804 100%);
+      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.95), inset 0 0 12px rgba(0, 255, 136, 0.25);
+    }
+    .crt-screen-emerald::before {
+      content: " ";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.38) 50%), 
+                  linear-gradient(90deg, rgba(0, 255, 136, 0.03), rgba(0, 255, 136, 0.01), rgba(0, 255, 136, 0.03));
+      background-size: 100% 3px, 4px 100%;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .crt-screen-emerald::after {
+      content: " ";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.6) 100%);
+      pointer-events: none;
+      z-index: 21;
+    }
+
+    /* CRT Amber Sub-display */
+    .crt-screen-amber {
+      position: relative;
+      background: radial-gradient(ellipse at center, #261604 0%, #130a01 75%, #070400 100%);
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95), inset 0 0 8px rgba(245, 158, 11, 0.25);
+    }
+    .crt-screen-amber::before {
+      content: " ";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+      background-size: 100% 3px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* Tactical Beveled Bolt Screws */
+    .bolt-hex {
+      width: 13px;
+      height: 13px;
+      background: radial-gradient(circle, #3d4655 25%, #181d26 100%);
+      border-radius: 50%;
+      border: 1px solid #11151c;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .bolt-hex::before {
+      content: "";
+      position: absolute;
+      top: 5px; left: 2px; right: 2px;
+      height: 1.5px;
+      background: #090c10;
+    }
+    .bolt-hex::after {
+      content: "";
+      position: absolute;
+      top: 2px; bottom: 2px; left: 5px;
+      width: 1.5px;
+      background: #090c10;
+    }
+
+    /* Rackmount Handles */
+    .rack-handle {
+      width: 10px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #1c232d, #3c4554 40%, #1a202a 80%);
+      border: 1px solid #0f131a;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.8), inset 1px 0 1px rgba(255,255,255,0.25);
+    }
+
+    /* Heavy Duty Rocker / Toggle Switch */
+    .toggle-rocker {
+      width: 28px;
+      height: 52px;
+      background: #0d1219;
+      border-radius: 4px;
+      border: 1.5px solid #232c3a;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
+      position: relative;
+      cursor: pointer;
+    }
+    .toggle-rocker-thumb {
+      width: 22px;
+      height: 25px;
+      position: absolute;
+      left: 1.5px;
+      top: 2px;
+      background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+      border-radius: 3px;
+      border: 1px solid #4b5563;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.3);
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .toggle-rocker.is-off .toggle-rocker-thumb {
+      top: 22px;
+      background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+    }
+
+    /* Vertical Fader Track & Thumb */
+    .fader-track {
+      width: 8px;
+      background: #06090e;
+      border-radius: 4px;
+      border: 1px solid #1a2332;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+      position: relative;
+    }
+    .fader-thumb {
+      width: 28px;
+      height: 38px;
+      background: linear-gradient(180deg, #374151 0%, #1e2634 50%, #111621 100%);
+      border: 1.5px solid #4b5563;
+      border-radius: 4px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.85), inset 0 1px 2px rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+
+    /* Custom Scrollbar for Terminal Log */
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #06090e;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 2px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #00ff88;
+    }
+
+    /* Oscilloscope Grid Background */
+    .bg-scope-grid {
+      background-image: 
+        linear-gradient(rgba(0, 255, 136, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.12) 1px, transparent 1px),
+        linear-gradient(rgba(0, 255, 136, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+    }
+
+    .bg-amber-grid {
+      background-image: 
+        linear-gradient(rgba(245, 158, 11, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 158, 11, 0.15) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+  </style>
+<style id="whispers-offline-css">/*WHISPERS_OFFLINE_CSS*/</style>
+</head>
+<body class="text-slate-200 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 p-2 sm:p-4 lg:p-6 min-h-screen flex items-start justify-center">
+<!-- ========================================================================= -->
+<!-- MASTER WORKSTATION BOX CHASSIS (RUGGED RETRO HARDWARE CONSOLE)          -->
+<!-- ========================================================================= -->
+<div class="w-full max-w-[1580px] bg-chassis-dark rounded-2xl border-4 border-chassis-rim shadow-tactile-chassis flex flex-col overflow-hidden relative" data-purpose="workstation-hardware-enclosure">
+<!-- Top Chassis Grip Screws & Heavy Corner Reinforcements -->
+<div class="absolute top-2.5 left-2.5 bolt-hex z-30" title="CHASSIS CORNER ANCHOR"></div>
+<div class="absolute top-2.5 right-2.5 bolt-hex z-30" title="CHASSIS CORNER ANCHOR"></div>
+<div class="absolute bottom-2.5 left-2.5 bolt-hex z-30" title="CHASSIS CORNER ANCHOR"></div>
+<div class="absolute bottom-2.5 right-2.5 bolt-hex z-30" title="CHASSIS CORNER ANCHOR"></div>
+<!-- Outer Rack Bezel Screws across Top Header -->
+<div class="h-2 bg-gradient-to-b from-[#1c222b] to-[#12161f] border-b border-void-800 flex items-center justify-between px-16">
+<span class="w-2 h-0.5 bg-slate-600/50"></span>
+<span class="w-2 h-0.5 bg-slate-600/50"></span>
+<span class="w-2 h-0.5 bg-slate-600/50"></span>
+<span class="w-2 h-0.5 bg-slate-600/50"></span>
+</div>
+<!-- ======================================================================= -->
+<!-- MASTER CONSOLE HEADER / TELEMETRY STATUS BAR                           -->
+<!-- ======================================================================= -->
+<header class="bg-gradient-to-r from-void-980 via-void-950 to-void-980 px-6 py-3.5 border-b-2 border-chassis-rim/90 flex flex-wrap items-center justify-between gap-4 relative z-20">
+<!-- Console Identity / Brand Badge -->
+<div class="flex items-center gap-4">
+<!-- KiwiSDR / Military Emblem Plate -->
+<div class="px-2.5 py-1.5 rounded bg-void-900 border border-void-700/80 shadow-tactile-out flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-cyanGlow animate-ping"></div>
+<span class="font-code font-bold text-xs tracking-wider text-cyan-300">SDR-9 // MK-IV</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="font-mono text-base lg:text-lg font-bold uppercase tracking-widest text-slate-100 flex items-center gap-2">
+<span class="text-cyanGlow">◆</span>
+              WHISPERS OF THE SPIRIT
+              <span class="text-xs px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800/80 text-cyan-300 font-code font-normal">AETHERIC TELEMETRY UNIT</span>
+</h1>
+</div>
+<p class="font-mono text-[10px] tracking-wider text-slate-400 uppercase flex items-center gap-3">
+<span>WIDEBAND KIWISDR RECEIVER</span>
+<span class="text-slate-600">•</span>
+<span>HIGH-SPEED FREQUENCY SWEEPER</span>
+<span class="text-slate-600">•</span>
+<span class="text-phosphorBright">AUDIO INVESTIGATION &amp; ENTITY CALIBRATION</span>
+</p>
+</div>
+</div>
+<!-- Real-Time Telemetry Readouts (GMT, Celestial Astral Coordinates, Lock, Cathode) -->
+<div class="flex items-center gap-3 lg:gap-5 font-mono text-[11px]">
+<!-- GMT / System Clock -->
+<div class="flex flex-col items-end px-3 py-1 bg-void-900/90 rounded border border-void-800 shadow-tactile-in">
+<span class="text-[9px] text-slate-500 uppercase">TELEMETRY UTC</span>
+<span class="text-phosphorAmber font-code font-bold tracking-wider" id="utc-clock">03:41:22 UTC</span>
+</div>
+<!-- Telemetry Indicators Bank -->
+<div class="flex items-center gap-2 px-3 py-1.5 bg-void-900 rounded border border-void-800 shadow-tactile-in">
+<div class="flex items-center gap-1.5 pr-2 border-r border-void-700/60">
+<span id="led-rx" class="w-2 h-2 rounded-full bg-slate-600"></span>
+<span id="chip-rx" class="text-[10px] text-slate-300 font-bold">RECEIVER IDLE</span>
+</div>
+<div class="flex items-center gap-1.5 pr-2 border-r border-void-700/60">
+<span id="led-rec" class="w-2 h-2 rounded-full bg-slate-600"></span>
+<span id="chip-rec" class="text-[10px] text-slate-400 font-bold">NOT RECORDING</span>
+</div>
+<div class="flex items-center gap-1.5">
+<i class="fa-solid fa-bolt text-phosphorAmber text-[10px]"></i>
+<span id="chip-level" class="text-[10px] text-phosphorAmber font-bold">NO AUDIO</span>
+</div>
+</div>
+<!-- Power Rocker On/Off -->
+<div class="flex items-center gap-2">
+<div class="flex flex-col items-center">
+<span class="text-[8px] text-slate-400 uppercase tracking-tighter">PWR</span>
+<div class="w-6 h-10 bg-void-980 border border-void-700 rounded p-0.5 flex flex-col justify-between cursor-pointer">
+<div id="pwr-top" class="w-full h-4 bg-void-850 rounded-sm"></div>
+<div id="pwr-bottom" class="w-full h-4 bg-void-700 rounded-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ======================================================================= -->
+<!-- MAIN WORKSTATION CONSOLE BODY - MULTI-MODULE RACK LAYOUT                -->
+<!-- ======================================================================= -->
+<main class="flex-1 p-3.5 lg:p-5 bg-telemetry-grid grid grid-cols-12 gap-3.5 lg:gap-4.5 bg-[#070b12]" data-purpose="rackmount-subsystems">
+<!-- ===================================================================== -->
+<!-- MODULE 01 & 02 (LEFT COLUMN): KIWISDR RECEIVER & TUNER RACK           -->
+<!-- ===================================================================== -->
+<section class="col-span-12 lg:col-span-4 flex flex-col gap-3.5" data-purpose="module-sdr-receiver">
+<!-- MODULE 01: KIWISDR & RECEIVER TUNER RACK -->
+<div class="rounded-xl border-2 border-void-700 bg-void-900/95 p-3.5 shadow-tactile-out flex-1 flex flex-col justify-between relative">
+<!-- Module Corner Screws -->
+<div class="absolute top-2 left-2 bolt-hex"></div>
+<div class="absolute top-2 right-2 bolt-hex"></div>
+<div class="absolute bottom-2 left-2 bolt-hex"></div>
+<div class="absolute bottom-2 right-2 bolt-hex"></div>
+<div>
+<!-- Module Title Strip -->
+<div class="flex items-center justify-between border-b border-void-800 pb-2 mb-3 px-4">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-radio text-cyanGlow text-xs"></i>
+<span class="font-mono text-xs font-bold tracking-wider text-slate-200 uppercase">
+                  01 / RADIO RECEIVER TUNER RACK
+                </span>
+</div>
+<span id="badge-node" class="px-2 py-0.5 rounded bg-void-950 font-code text-[9px] text-slate-400 border border-void-700">NO RECEIVER LIST YET</span>
+</div>
+<!-- Receiver Source Selector -->
+<div class="space-y-3 font-mono text-xs">
+<div>
+<label class="block text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-semibold">Receiver Source</label>
+<div class="relative">
+<select class="w-full bg-void-950 border border-void-700 rounded-lg px-3 py-2 text-cyan-200 text-xs focus:ring-1 focus:ring-cyanGlow focus:border-cyanGlow shadow-tactile-in appearance-none cursor-pointer">
+<option selected="">KiwiSDR • AM / narrow FM</option>
+</select>
+<i class="fa-solid fa-chevron-down absolute right-3 top-3 text-[10px] text-slate-400 pointer-events-none"></i>
+</div>
+</div>
+<!-- Button: Public SDR Network Scan -->
+<button class="w-full py-2 px-3 rounded-lg bg-void-850 hover:bg-void-800 border border-cyan-500/50 hover:border-cyan-400 text-cyan-300 text-xs font-semibold flex items-center justify-center gap-2 shadow-tactile-out active:scale-[0.99] transition-all">
+<i class="fa-solid fa-satellite-dish text-xs animate-pulse"></i>
+<span id="scan-label">SCAN PUBLIC SDR RECEIVERS</span>
+</button>
+<!-- Antenna preset select -->
+<div>
+<label class="block text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-semibold">Public Antenna Node / Preset</label>
+<div class="relative">
+<select class="w-full bg-void-950 border border-void-700 rounded-lg px-3 py-2 text-slate-200 text-xs focus:ring-1 focus:ring-cyanGlow focus:border-cyanGlow shadow-tactile-in appearance-none cursor-pointer">
+<option>Find public SDR receivers first</option>
+</select>
+<i class="fa-solid fa-chevron-down absolute right-3 top-3 text-[10px] text-slate-400 pointer-events-none"></i>
+</div>
+</div>
+<!-- Frequency Sweep Limits (Min kHz & Max kHz) -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div class="bg-void-950 p-2 rounded-lg border border-void-800 shadow-tactile-in">
+<label class="block text-[9px] text-slate-400 uppercase tracking-tight">MINIMUM (kHz)</label>
+<input class="w-full bg-transparent border-0 p-0 text-phosphorBright font-code text-sm font-bold focus:ring-0" type="text" value="531 kHz"/>
+<span class="text-[8px] text-slate-500 font-mono">AM Broadcast Lower</span>
+</div>
+<div class="bg-void-950 p-2 rounded-lg border border-void-800 shadow-tactile-in">
+<label class="block text-[9px] text-slate-400 uppercase tracking-tight">MAXIMUM (kHz)</label>
+<input class="w-full bg-transparent border-0 p-0 text-phosphorBright font-code text-sm font-bold focus:ring-0" type="text" value="1602 kHz"/>
+<span class="text-[8px] text-slate-500 font-mono">AM Broadcast Upper</span>
+</div>
+</div>
+<!-- Step & Sweep Dwell -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-void-950 p-2 rounded-lg border border-void-800 shadow-tactile-in">
+<label class="block text-[9px] text-slate-400 uppercase tracking-tight">STEP FREQ</label>
+<div class="flex items-center justify-between mt-1">
+<span id="radio-step-readout" class="text-cyanGlow font-code font-bold text-xs">9 kHz</span>
+<div class="flex gap-1">
+<button class="px-1.5 py-0.5 rounded bg-void-800 text-[9px] hover:text-white border border-void-700">5k</button>
+<button class="px-1.5 py-0.5 rounded bg-cyan-950 text-[9px] text-cyan-300 border border-cyan-800">9k</button>
+<button class="px-1.5 py-0.5 rounded bg-void-800 text-[9px] hover:text-white border border-void-700">10k</button>
+</div>
+</div>
+</div>
+<div class="bg-void-950 p-2 rounded-lg border border-void-800 shadow-tactile-in">
+<label class="block text-[9px] text-slate-400 uppercase tracking-tight">SWEEP DWELL (ms)</label>
+<div class="flex items-center justify-between mt-1">
+<span id="radio-dwell-readout" class="text-phosphorAmber font-code font-bold text-xs">250 ms</span>
+<input class="w-16 h-1.5 bg-void-850 accent-amber-500 cursor-pointer" max="500" min="50" type="range" value="150"/>
+</div>
+</div>
+</div>
+<!-- Demodulator Modes (AM, USB, LSB, CW/RAW, WFM, NFM) -->
+<div>
+<label class="block text-[10px] text-slate-400 uppercase tracking-wider mb-1.5 font-semibold">Demodulation Matrix</label>
+<div class="grid grid-cols-6 gap-1 font-code text-[10px]">
+<button class="py-1.5 rounded bg-cyan-600/30 border border-cyan-400 text-cyan-200 font-bold shadow-glow-cyan">AM</button>
+<button class="py-1.5 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">USB</button>
+<button class="py-1.5 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">LSB</button>
+<button class="py-1.5 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">CW</button>
+<button class="py-1.5 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">WFM</button>
+<button class="py-1.5 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">FM</button>
+</div>
+</div>
+<!-- Sweep Direction -->
+<div>
+<label class="block text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-semibold">Sweep Direction</label>
+<div class="grid grid-cols-4 gap-1.5 font-code text-[10px]">
+<button class="py-1 rounded bg-cyan-950/90 border border-cyan-500 text-cyan-300 font-bold">⟳ BOUNCE</button>
+<button class="py-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">▲ UP</button>
+<button class="py-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">▼ DOWN</button>
+<button class="py-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200">⤨ RANDOM</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom SDR Hardware Note -->
+<div class="mt-3 pt-2 border-t border-void-800/80 font-mono text-[9px] text-slate-500 leading-tight">
+            * Public KiwiSDR receivers cover 0–30 MHz (long, medium and shortwave AM). Broadcast FM 88–108 MHz needs Gqrx with your own SDR.
+          </div>
+</div>
+<!-- MODULE: SPIRIT HARDWARE FILTER TOGGLES -->
+<div class="rounded-xl border border-void-700/80 bg-void-900/90 p-3 shadow-tactile-out font-mono">
+<div class="flex items-center justify-between border-b border-void-800 pb-1.5 mb-2">
+<span class="text-[10px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+<i class="fa-solid fa-filter text-phosphor text-[9px]"></i>
+              Aetheric DSP Filters
+            </span>
+<span id="filters-count" class="text-[8px] text-slate-400 font-code">ALL OFF</span>
+</div>
+<div class="space-y-2 text-[10px]">
+<!-- Filter 1 -->
+<div class="flex items-center justify-between p-1.5 bg-void-950 rounded border border-void-800">
+<span class="text-slate-300">Noise reduction (live audio)</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-7 h-3.5 bg-void-900 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-phosphor after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-emerald-950 peer-checked:border peer-checked:border-emerald-700 border border-void-700"></div>
+</label>
+</div>
+<!-- Filter 2 -->
+<div class="flex items-center justify-between p-1.5 bg-void-950 rounded border border-void-800">
+<span class="text-slate-300">Sweeping filter (live audio)</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-7 h-3.5 bg-void-900 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-cyanGlow after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-cyan-950 peer-checked:border peer-checked:border-cyan-700 border border-void-700"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- MODULE 02 (CENTER COLUMN): SPECTRAL CRT DISPLAYS & LIVE WATERFALL     -->
+<!-- ===================================================================== -->
+<section class="col-span-12 lg:col-span-5 flex flex-col gap-3.5" data-purpose="module-crt-oscilloscope">
+<!-- MAIN CRT OSCILLOSCOPE CHASSIS (INSPIRED BY IMAGE_3 & IMAGE_4) -->
+<div class="rounded-2xl border-4 border-chassis-rim bg-void-980 p-3 shadow-chassis-bezel flex-1 flex flex-col relative">
+<!-- CRT Corner Bolts -->
+<div class="absolute top-2 left-2 bolt-hex"></div>
+<div class="absolute top-2 right-2 bolt-hex"></div>
+<div class="absolute bottom-2 left-2 bolt-hex"></div>
+<div class="absolute bottom-2 right-2 bolt-hex"></div>
+<!-- CRT Screen Shell -->
+<div class="crt-screen-emerald rounded-xl border-2 border-emerald-950/90 p-4 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[380px]">
+<!-- CRT Screen Header Readouts -->
+<div class="relative z-30 flex items-center justify-between font-mono text-[10px] text-emerald-300 border-b border-emerald-900/60 pb-2">
+<div class="flex items-center gap-2">
+<span id="crt-led" class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+<span class="text-phosphorBright font-bold tracking-widest uppercase">02 / LIVE RECEIVER // <span id="crt-state">IDLE</span></span>
+</div>
+<div id="crt-mode" class="text-emerald-400 font-code font-bold uppercase tracking-wider">AM • DWELL 250 ms</div>
+</div>
+<!-- Oscilloscope Center Frequency Readout -->
+<div class="relative z-30 text-center my-3">
+<!-- Digital Wave Graphic Motif -->
+<div class="flex justify-center items-center gap-1 text-emerald-400/80 mb-1">
+<span class="w-1 h-3 bg-emerald-400"></span>
+<span class="w-1 h-5 bg-emerald-400"></span>
+<span class="w-1 h-7 bg-emerald-400"></span>
+<span class="w-1 h-4 bg-emerald-400"></span>
+<span class="w-1 h-8 bg-emerald-400"></span>
+<span class="w-1 h-10 bg-emerald-300"></span>
+<span class="w-1.5 h-12 bg-phosphorBright animate-pulse"></span>
+<span class="w-1 h-10 bg-emerald-300"></span>
+<span class="w-1 h-8 bg-emerald-400"></span>
+<span class="w-1 h-4 bg-emerald-400"></span>
+<span class="w-1 h-7 bg-emerald-400"></span>
+<span class="w-1 h-5 bg-emerald-400"></span>
+<span class="w-1 h-3 bg-emerald-400"></span>
+</div>
+<div class="text-xs uppercase tracking-widest text-emerald-400 font-mono font-semibold">WHISPERS OF THE SPIRIT</div>
+<div class="font-code text-4xl lg:text-5xl font-bold tracking-wider text-phosphorBright drop-shadow-[0_0_12px_rgba(0,255,136,0.85)] my-1">
+                142.850 <span class="text-xl lg:text-2xl font-normal text-emerald-400">MHz</span>
+</div>
+<p class="font-mono text-[10px] text-emerald-400/90 tracking-widest uppercase">
+                <span id="crt-sub">NOT SWEEPING</span>
+              </p>
+</div>
+<!-- SVG Oscilloscope Waveform & Spectrogram Grid -->
+<div class="relative z-30 my-2 h-36 w-full rounded border border-emerald-800/40 bg-scope-grid relative overflow-hidden flex items-center justify-center">
+<!-- Calibration Axis Markers -->
+<div class="absolute left-2 top-2 font-code text-[8px] text-emerald-500/70">+1</div>
+<div class="absolute left-2 top-1/2 -translate-y-1/2 font-code text-[8px] text-emerald-500/70">0</div>
+<div class="absolute left-2 bottom-2 font-code text-[8px] text-emerald-500/70">−1</div>
+<!-- Live Spectral Sine & Carrier Wave Paths -->
+<svg class="w-full h-full text-phosphorBright stroke-current fill-none stroke-[2] drop-shadow-[0_0_6px_rgba(0,255,136,0.9)]" viewbox="0 0 500 120">
+<!-- Ghost Formant Secondary Wave -->
+<path id="receiver-trace" d="M0,60 L500,60"></path>
+</svg>
+<!-- Anomaly Detection Badge -->
+<div class="absolute top-2 right-2 bg-emerald-950/90 border border-emerald-500/80 px-2 py-0.5 rounded font-code text-[9px] text-phosphorBright">
+                <span id="crt-strongest">STRONGEST: — Hz</span>
+              </div>
+</div>
+<!-- Lower Telemetry Footer Status inside CRT -->
+<div class="relative z-30 flex items-center justify-between border-t border-emerald-900/60 pt-2 font-mono text-[10px] text-emerald-300">
+<div class="flex items-center gap-2">
+<span id="crt-chip-mode" class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800">MODE: AM</span>
+<span id="crt-chip-step" class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800">STEP: 9 kHz</span>
+<span id="crt-chip-hops" class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800">HOPS: 0</span>
+</div>
+<div class="flex items-center gap-2">
+<span id="crt-level" class="text-phosphorBright font-bold font-code tracking-wider">LEVEL: — dBFS</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECONDARY SUB-DISPLAY & CATHODE VECTOR SCOPE (INSPIRED BY SENNHEISER / BATTERY STATUS UNIT) -->
+<div class="grid grid-cols-12 gap-3 font-mono">
+<!-- Secondary CRT: Vector Status Scope -->
+<div class="col-span-6 rounded-xl border-2 border-chassis-rim bg-void-950 p-2.5 shadow-tactile-out flex flex-col justify-between">
+<div class="flex items-center justify-between text-[9px] text-slate-400 mb-1 border-b border-void-800 pb-1">
+<span class="text-phosphorBright font-bold uppercase">CATHODE / VECTOR SCOPE</span>
+<span class="text-slate-500">LIVE AUDIO</span>
+</div>
+<div class="crt-screen-emerald rounded-lg border border-emerald-950 h-28 relative flex items-center justify-center overflow-hidden">
+<canvas id="scope-canvas" class="w-full h-full block" aria-label="X/Y scope of the live audio"></canvas>
+</div>
+<div class="flex items-center justify-between text-[8px] text-slate-400 mt-1.5">
+<span>X: NOW • Y: 1 ms LATER</span>
+<span id="scope-state" class="text-slate-500">NO SIGNAL</span>
+</div>
+</div>
+<!-- Secondary Amber CRT: Battery & Power Graph (as seen in Image 4) -->
+<div class="col-span-6 rounded-xl border-2 border-chassis-rim bg-void-950 p-2.5 shadow-tactile-out flex flex-col justify-between">
+<div class="flex items-center justify-between text-[9px] text-slate-400 mb-1 border-b border-void-800 pb-1">
+<span class="text-spectralAmber font-bold uppercase">LEVEL HISTORY • 60 s</span>
+<span id="hist-now" class="text-spectralAmber">— dBFS</span>
+</div>
+<div class="crt-screen-amber rounded-lg border border-amber-950 h-28 relative flex items-center justify-center overflow-hidden p-2 bg-amber-grid">
+<canvas id="level-canvas" class="w-full h-full block" aria-label="Loudness of the incoming audio over the last minute"></canvas>
+</div>
+<div class="flex items-center justify-between text-[8px] text-slate-400 mt-1.5">
+<span id="hist-peak">PEAK: — dBFS</span>
+<span id="hist-clip" class="text-spectralAmber font-bold">CLIPPED: 0%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- MODULE 03 (RIGHT COLUMN): TACTILE ROTARY, FADERS & AUDIO INVESTIGATION -->
+<!-- ===================================================================== -->
+<section class="col-span-12 lg:col-span-3 flex flex-col gap-3.5" data-purpose="module-tactile-controls">
+<!-- MODULE: PHYSICAL ROTARY KNOBS & TOGGLES (SENNHEISER RETRO CONSOLE LOOK) -->
+<div class="rounded-xl border-2 border-chassis-rim bg-chassis-plate p-3.5 shadow-tactile-out relative">
+<!-- Bolts -->
+<div class="absolute top-2 left-2 bolt-hex"></div>
+<div class="absolute top-2 right-2 bolt-hex"></div>
+<div class="flex items-center justify-between border-b border-void-800 pb-1.5 mb-3 px-3">
+<span class="font-mono text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+<i class="fa-solid fa-sliders text-cyanGlow text-[10px]"></i>
+              03 / FILTER SWITCHES &amp; LEVELS
+            </span>
+<span class="text-[9px] font-mono text-slate-400">LIVE AUDIO</span>
+</div>
+<!-- Heavy Duty Rocker Switches Row (FTC, RADAR AMTI, MONO/STEREO) -->
+<div class="grid grid-cols-3 gap-2 pt-1 text-center font-mono">
+<div class="flex flex-col items-center">
+<span class="text-[8px] text-slate-400 font-bold mb-1">FTC OUT</span>
+<div class="toggle-rocker flex items-center justify-center">
+<div class="toggle-rocker-thumb"></div>
+</div>
+<span class="text-[8px] text-emerald-400 mt-1 font-code">ENGAGED</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-[8px] text-slate-400 font-bold mb-1">RADAR AMTI</span>
+<div class="toggle-rocker is-off flex items-center justify-center">
+<div class="toggle-rocker-thumb"></div>
+</div>
+<span class="text-[8px] text-slate-500 mt-1 font-code">STANDBY</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-[8px] text-slate-400 font-bold mb-1">MONO/STEREO</span>
+<div class="toggle-rocker flex items-center justify-center">
+<div class="toggle-rocker-thumb"></div>
+</div>
+<span class="text-[8px] text-cyanGlow mt-1 font-code">MONO</span>
+</div>
+</div>
+<!-- Precision Linear Faders Bank (Sensitivity & Aetheric Gain with Decibel Markings) -->
+<div class="pt-3 mt-3 border-t border-void-800">
+<div class="flex items-center justify-between text-[9px] font-mono text-slate-400 mb-2">
+<span class="uppercase font-bold text-slate-300">PRECISION CALIBRATED FADERS</span>
+<span class="text-cyan-300 font-code">0–100%</span>
+</div>
+<div class="bg-void-950 p-3 rounded-lg border border-void-800 flex justify-around items-center">
+<!-- Fader 1: SENSITIVITY -->
+<div class="flex items-center gap-3">
+<!-- Scale Notches -->
+<div class="flex flex-col justify-between h-36 font-code text-[8px] text-slate-500 text-right leading-none">
+<span>+50</span>
+<span>+40</span>
+<span>+20</span>
+<span>00</span>
+<span>-20</span>
+<span>-40</span>
+<span>-50</span>
+</div>
+<!-- Vertical Fader Track -->
+<div class="fader-track h-36 flex items-center justify-center">
+<!-- Movable Slider Thumb -->
+<div class="fader-thumb flex flex-col items-center justify-center absolute top-8">
+<span class="w-3.5 h-[2px] bg-phosphorBright"></span>
+</div>
+</div>
+<div class="flex flex-col text-left">
+<span class="font-mono text-[9px] text-slate-400 font-bold uppercase">SENS</span>
+<span class="font-code text-xs text-phosphorBright font-bold">+28dB</span>
+<span class="text-[8px] text-slate-500 font-mono">AMTI REC</span>
+</div>
+</div>
+<!-- Fader 2: AETHERIC GAIN -->
+<div class="flex items-center gap-3 border-l border-void-800/80 pl-4">
+<!-- Scale Notches -->
+<div class="flex flex-col justify-between h-36 font-code text-[8px] text-slate-500 text-right leading-none">
+<span>+50</span>
+<span>+40</span>
+<span>+20</span>
+<span>00</span>
+<span>-20</span>
+<span>-40</span>
+<span>-50</span>
+</div>
+<!-- Vertical Fader Track -->
+<div class="fader-track h-36 flex items-center justify-center">
+<!-- Movable Slider Thumb -->
+<div class="fader-thumb flex flex-col items-center justify-center absolute top-14">
+<span class="w-3.5 h-[2px] bg-cyanGlow"></span>
+</div>
+</div>
+<div class="flex flex-col text-left">
+<span class="font-mono text-[9px] text-slate-400 font-bold uppercase">GAIN</span>
+<span class="font-code text-xs text-cyanGlow font-bold">+14dB</span>
+<span class="text-[8px] text-slate-500 font-mono">AETHERIC</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODULE 04: LIVE VOICE EFFECTS (wired by console-live.js) -->
+<div class="rounded-xl border border-void-700 bg-void-900/95 p-3 shadow-tactile-out font-mono flex-1">
+<div class="flex items-center justify-between border-b border-void-800 pb-1.5 mb-2">
+<span class="text-[10px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+<i class="fa-solid fa-microphone-lines text-cyanGlow text-[9px]"></i>
+              04 / LIVE VOICE EFFECTS
+            </span>
+<span id="fx-count" class="text-[8px] text-slate-400 font-code">ALL OFF</span>
+</div>
+<div class="space-y-2.5 text-[9px]">
+<div>
+<div class="flex justify-between text-slate-400 mb-0.5"><span>ECHO MIX</span><span id="fx-echo-read" class="text-cyanGlow font-code font-bold">OFF</span></div>
+<input id="fx-echo" aria-label="Echo mix" class="w-full h-1.5 bg-void-950 rounded appearance-none cursor-pointer accent-cyan-400 border border-void-800" max="0.8" min="0" step="0.01" type="range" value="0"/>
+</div>
+<div>
+<div class="flex justify-between text-slate-400 mb-0.5"><span>ECHO DELAY</span><span id="fx-delay-read" class="text-phosphorBright font-code font-bold">250 ms</span></div>
+<input id="fx-delay" aria-label="Echo delay" class="w-full h-1.5 bg-void-950 rounded appearance-none cursor-pointer accent-emerald-400 border border-void-800" max="1200" min="40" step="10" type="range" value="250"/>
+</div>
+<div>
+<div class="flex justify-between text-slate-400 mb-0.5"><span>REVERB</span><span id="fx-reverb-read" class="text-phosphorAmber font-code font-bold">OFF</span></div>
+<input id="fx-reverb" aria-label="Reverb" class="w-full h-1.5 bg-void-950 rounded appearance-none cursor-pointer accent-amber-500 border border-void-800" max="80" min="0" type="range" value="0"/>
+</div>
+<div>
+<div class="flex justify-between text-slate-400 mb-0.5"><span>ECHO FEEDBACK</span><span id="fx-feedback-read" class="text-cyanGlow font-code font-bold">OFF</span></div>
+<input id="fx-feedback" aria-label="Echo feedback" class="w-full h-1.5 bg-void-950 rounded appearance-none cursor-pointer accent-cyan-400 border border-void-800" max="0.7" min="0" step="0.01" type="range" value="0"/>
+</div>
+<div>
+<div class="flex justify-between text-slate-400 mb-0.5"><span>GHOST BOX CHOP</span><span id="fx-chop-read" class="text-phosphorBright font-code font-bold">OFF</span></div>
+<input id="fx-chop" aria-label="Ghost box chop rate" class="w-full h-1.5 bg-void-950 rounded appearance-none cursor-pointer accent-emerald-400 border border-void-800" max="12" min="0" step="1" type="range" value="0"/>
+</div>
+<p class="text-[8px] text-slate-500 leading-snug pt-1 border-t border-void-800">Creative effects on what you hear. The raw reception is still recorded separately.</p>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- MODULE 05 (BOTTOM RACK): ROLLING TERMINAL LOG & MASTER PUNCH CONTROLS -->
+<!-- ===================================================================== -->
+<!-- ===================================================================== -->
+<!-- DEDICATED MODULES: SOUND & MUSIC HARMONIC SPECTRAL ANALYZER & TEMPORAL INTERSECTION DECELERATOR -->
+<!-- ===================================================================== -->
+<div class="col-span-12 grid grid-cols-12 gap-3.5 lg:gap-4.5" data-purpose="module-harmonics-and-temporal-slowdown">
+<!-- MODULE A: SOUND & MUSIC HARMONIC SPECTRAL ANALYZER / DYNAMIC AUDIO WAVEFORM VISUALIZER (7 COLS ON DESKTOP) -->
+<div class="col-span-12 lg:col-span-7 rounded-2xl border-2 border-void-700 bg-void-900/95 p-3.5 shadow-tactile-out flex flex-col justify-between relative">
+<div class="absolute top-2 left-2 bolt-hex"></div>
+<div class="absolute top-2 right-2 bolt-hex"></div>
+<div class="absolute bottom-2 left-2 bolt-hex"></div>
+<div class="absolute bottom-2 right-2 bolt-hex"></div>
+<!-- Header Strip -->
+<div class="flex flex-wrap items-center justify-between border-b border-void-800 pb-2 mb-3 px-4 gap-2">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-satellite-dish text-cyanGlow text-xs animate-pulse"></i>
+<span class="font-mono text-xs font-bold tracking-wider text-slate-200 uppercase">
+          05 / SOUND &amp; MUSIC HARMONIC SPECTRAL ANALYZER
+        </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-emerald-950/80 font-code text-[9px] text-phosphorBright border border-emerald-800 flex items-center gap-1.5">
+<span id="an-led" class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> <span id="an-state">FFT 48 kHz • WAITING</span>
+        </span>
+
+</div>
+</div>
+<!-- Input Selector & VU Metering Strip -->
+<div class="bg-void-950 p-2.5 rounded-xl border border-void-800 shadow-tactile-in mb-3 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+<!-- Analyser input -->
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-[10px] text-slate-400 uppercase font-semibold">INPUT:</span>
+<span class="px-2 py-1 rounded bg-cyan-950 border border-cyan-400 text-cyan-200 font-bold font-code text-[10px]">● RECEIVER AUDIO • BEFORE EFFECTS</span>
+</div>
+<!-- Level meter (mono receiver audio) -->
+<div class="flex items-center gap-2.5 bg-void-900 px-3 py-1 rounded border border-void-800">
+<div class="w-32 h-2 bg-void-950 rounded overflow-hidden border border-void-800"><div id="vu-bar" class="h-full bg-gradient-to-r from-emerald-500 via-phosphorAmber to-spectralRed" style="width:0%"></div></div>
+<div class="flex flex-col items-end leading-none">
+<span class="text-[8px] text-slate-500 uppercase">PEAK LEVEL</span>
+<span id="vu-peak" class="text-cyanGlow font-code font-bold text-xs">— dB</span>
+</div>
+</div>
+</div>
+<!-- Main Visualizer CRT Bay: Multi-band Spectrum Analyzer (32Hz to 16kHz) + Dynamic Waveform Trace -->
+<div class="crt-screen-emerald rounded-xl border-2 border-emerald-950/90 p-3 relative overflow-hidden flex flex-col justify-between">
+<!-- Visualizer Bay Top Strip -->
+<div class="relative z-30 flex items-center justify-between font-mono text-[9px] text-emerald-300 border-b border-emerald-900/60 pb-1.5 mb-2">
+<span class="flex items-center gap-1.5">
+<i class="fa-solid fa-sliders text-phosphorBright"></i>
+<span class="text-phosphorBright font-bold uppercase tracking-wider">ACOUSTIC &amp; SPECTRAL BANDS (SUB-BASS → AIR BAND)</span>
+</span>
+<span class="font-code text-emerald-400 uppercase tracking-widest">12 BANDS • 50 Hz – 16 kHz</span>
+</div>
+<!-- Multi-Band Audio Spectrum Frequency Bars (32Hz to 16kHz) -->
+<div class="relative z-30 grid grid-cols-12 gap-1.5 items-end h-28 pt-2 pb-1 border-b border-emerald-900/40 bg-scope-grid rounded px-2 mb-2">
+<!-- Band 32Hz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">50</span>
+</div>
+<!-- Band 64Hz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">64</span>
+</div>
+<!-- Band 125Hz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-phosphorBright rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">125</span>
+</div>
+<!-- Band 250Hz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">250</span>
+</div>
+<!-- Band 500Hz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">500</span>
+</div>
+<!-- Band 1kHz (Vocal Formant Peak) -->
+<div class="flex flex-col items-center gap-1 h-full justify-end relative">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">1k</span>
+</div>
+<!-- Band 2kHz (Spirit Resonance Core) -->
+<div class="flex flex-col items-center gap-1 h-full justify-end relative">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">2k</span>
+</div>
+<!-- Band 4kHz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">4k</span>
+</div>
+<!-- Band 8kHz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">8k</span>
+</div>
+<!-- Band 10kHz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">10k</span>
+</div>
+<!-- Band 12kHz -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">12k</span>
+</div>
+<!-- Band 16kHz (Air Band) -->
+<div class="flex flex-col items-center gap-1 h-full justify-end">
+<div class="w-full bg-void-950/80 rounded-t flex flex-col justify-end p-0.5 h-full border border-emerald-900/50">
+<div data-band class="w-full h-[5%] bg-gradient-to-t from-emerald-500 to-cyan-400 rounded-xs"></div>
+</div>
+<span class="font-code text-[8px] text-emerald-400/80">16k</span>
+</div>
+</div>
+<!-- Dynamic Audio Waveform Envelope Oscillogram -->
+<div class="relative z-30 h-16 w-full rounded border border-emerald-800/40 bg-void-950/90 overflow-hidden flex items-center justify-center p-1">
+<div class="absolute left-2 top-1 font-code text-[8px] text-emerald-500/70">ENVELOPE // TIME DOMAIN OSCILLOGRAM</div>
+<div id="osc-rms" class="absolute right-2 top-1 font-code text-[8px] text-cyan-300">RMS: — dBFS</div>
+<canvas id="osc-canvas" class="w-full h-full block" aria-label="Live waveform"></canvas>
+</div>
+<!-- Bottom Legend -->
+<div class="relative z-30 flex items-center justify-between pt-2 font-mono text-[9px] text-emerald-400 mt-1 border-t border-emerald-900/60">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-phosphorBright"></span> <span id="an-strongest">Strongest: — Hz</span></span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyanGlow"></span> <span id="an-clip">Clipped: 0%</span></span>
+</div>
+<span id="an-source" class="text-cyan-200 font-code font-bold">NO AUDIO</span>
+</div>
+</div>
+</div>
+<!-- MODULE B: SPIRIT INTERSECTION DECELERATION / TEMPORAL VELOCITY CHRONO-CONTROLLER (5 COLS ON DESKTOP) -->
+<div class="col-span-12 lg:col-span-5 rounded-2xl border-2 border-void-700 bg-void-900/95 p-3.5 shadow-tactile-out flex flex-col justify-between relative">
+<div class="absolute top-2 left-2 bolt-hex"></div>
+<div class="absolute top-2 right-2 bolt-hex"></div>
+<div class="absolute bottom-2 left-2 bolt-hex"></div>
+<div class="absolute bottom-2 right-2 bolt-hex"></div>
+<!-- Header Strip -->
+<div class="flex items-center justify-between border-b border-void-800 pb-2 mb-3 px-4">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-arrows-spin text-phosphorAmber text-xs animate-spin" style="animation-duration: 8s;"></i>
+<span class="font-mono text-xs font-bold tracking-wider text-slate-200 uppercase">
+          06 / SLOW-DOWN PLAYBACK
+        </span>
+</div>
+<span class="px-2 py-0.5 rounded bg-amber-950/80 font-code text-[9px] text-phosphorAmber border border-amber-800 flex items-center gap-1">
+<i class="fa-solid fa-bolt text-[8px]"></i> <span id="slow-pitch">PITCH KEPT</span>
+      </span>
+</div>
+<!-- Precision Telemetry Status Matrix -->
+<div class="grid grid-cols-2 gap-2 mb-3 font-mono text-[9px]">
+<div class="bg-void-950 p-2 rounded-lg border border-void-800 shadow-tactile-in flex flex-col justify-between">
+<span class="text-slate-400 uppercase tracking-tight">Playback speed</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span id="slow-speed" class="text-phosphorAmber font-code font-bold text-sm tracking-wide">1.00×</span>
+<span id="slow-percent" class="text-slate-500 font-mono text-[8px]">NORMAL</span>
+</div>
+<span class="text-[8px] text-emerald-400 mt-0.5 font-code">USED BY THE REVIEW DECK</span>
+</div>
+<div class="bg-void-950 p-2 rounded-lg border border-void-800 shadow-tactile-in flex flex-col justify-between">
+<span class="text-slate-400 uppercase tracking-tight">One second becomes</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span id="slow-stretch" class="text-cyanGlow font-code font-bold text-sm tracking-wide">1.0</span>
+<span class="text-slate-400 font-mono text-[8px]">seconds</span>
+</div>
+<span class="text-[8px] text-slate-400 mt-0.5 font-code">WORDS STRETCH • NOTHING IS ADDED</span>
+</div>
+</div>
+<!-- Skeuomorphic Physical Slowdown Dial & Vernier Slider Controls -->
+<div class="bg-chassis-plate rounded-xl border border-[#3b4759] p-3 shadow-tactile-in mb-3">
+<div class="flex items-center justify-between text-[10px] font-mono text-slate-300 font-bold uppercase tracking-wider mb-2 border-b border-void-800 pb-1">
+<span>SPEED CONTROL</span>
+<span id="slow-factor" class="text-phosphorAmber font-code text-[9px]">1.00×</span>
+</div>
+<div class="flex items-center justify-between gap-4">
+<!-- Skeuomorphic Heavy Knurled Deceleration Rotary Dial -->
+<div class="flex flex-col items-center">
+<div class="relative w-16 h-16 rounded-full bg-gradient-to-b from-[#2e3746] to-[#12161f] p-1.5 border-2 border-[#3d485c] shadow-knob-3d flex items-center justify-center cursor-pointer group">
+<svg class="absolute inset-0 w-full h-full text-slate-500 pointer-events-none" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="44" stroke="currentColor" stroke-dasharray="2,6" stroke-width="2.5"></circle>
+</svg>
+<!-- Dial Indicator Needle pointing to deep slowed position -->
+<div id="slow-dial" class="w-11 h-11 rounded-full bg-[#181f2a] border border-[#3b4759] shadow-tactile-in flex items-center justify-center relative transition-transform duration-200">
+<div class="absolute top-1 w-2 h-2 rounded-full bg-phosphorAmber shadow-glow-amber"></div>
+<div class="w-1 h-3.5 bg-phosphorAmber rounded-full absolute top-1"></div>
+</div>
+</div>
+<span class="text-[9px] font-bold text-slate-300 mt-1 uppercase font-mono tracking-tight">SPEED DIAL</span>
+<span class="text-[8px] text-phosphorAmber font-code">0.1× – 1×</span>
+</div>
+<!-- Vernier Linear Slowdown Calibration Levels Slider -->
+<div class="flex-1 flex flex-col justify-between pl-2">
+<div class="flex justify-between items-center text-[9px] font-mono mb-1">
+<span class="text-slate-400 font-semibold">SPEED</span>
+<span id="slow-read" class="text-phosphorAmber font-code font-bold">1.00×</span>
+</div>
+<input class="w-full h-2 bg-void-950 rounded appearance-none cursor-pointer accent-amber-500 border border-void-800 mb-2 shadow-tactile-in" max="100" min="0" type="range" value="85"/>
+<!-- Preset speeds -->
+<div class="grid grid-cols-4 gap-1 font-code text-[8px] text-center">
+<button data-slow="1" class="p-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200 transition-all">1.0× Normal</button>
+<button data-slow="0.5" class="p-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200 transition-all">0.5× Half</button>
+<button data-slow="0.25" class="p-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200 transition-all">0.25× Quarter</button>
+<button data-slow="0.1" class="p-1 rounded bg-void-950 border border-void-800 text-slate-400 hover:text-slate-200 transition-all">0.1× Crawl</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Time-stretch picture: how long one recorded second lasts at this speed -->
+<div class="crt-screen-amber rounded-xl border border-amber-950 p-2.5 relative overflow-hidden flex flex-col justify-between bg-amber-grid font-mono">
+<div class="relative z-30 flex items-center justify-between text-[8px] text-spectralAmber border-b border-amber-950/80 pb-1 mb-2">
+<span class="uppercase font-bold">TIME STRETCH</span>
+<span id="slow-pitch-note" class="font-code">VOICE PITCH KEPT</span>
+</div>
+<div class="relative z-30 space-y-1.5 text-[8px]">
+<div class="flex items-center gap-2"><span class="w-16 text-slate-400">RECORDED</span><div class="flex-1 h-2.5 bg-void-950 rounded overflow-hidden"><div class="h-full bg-spectralCyan" style="width:10%"></div></div><span class="w-10 text-right text-cyan-300 font-code">1.0 s</span></div>
+<div class="flex items-center gap-2"><span class="w-16 text-slate-400">YOU HEAR</span><div class="flex-1 h-2.5 bg-void-950 rounded overflow-hidden"><div id="slow-bar" class="h-full bg-phosphorAmber" style="width:10%"></div></div><span id="slow-bar-read" class="w-10 text-right text-phosphorAmber font-code">1.0 s</span></div>
+</div>
+<button type="button" data-open-deck class="relative z-30 mt-2 w-full py-1.5 rounded border border-emerald-500 bg-[#06261c] text-emerald-300 text-[9px] font-bold tracking-wider">OPEN REVIEW DECK</button>
+</div>
+</div>
+</div><section class="col-span-12 grid grid-cols-12 gap-3.5 mt-1" data-purpose="module-master-deck">
+<!-- Live Phosphor Terminal & System Log (Left half) -->
+<div class="col-span-12 lg:col-span-6 rounded-xl border border-void-700 bg-void-980 p-3 shadow-tactile-out flex flex-col">
+<div class="flex items-center justify-between border-b border-void-800 pb-1.5 mb-2 font-mono text-[10px]">
+<div class="flex items-center gap-2 text-slate-400">
+<i class="fa-solid fa-terminal text-cyanGlow text-[9px]"></i>
+<span class="text-slate-300 font-bold uppercase">LIVE SESSION LOG</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="text-[9px] font-code text-emerald-400">REAL EVENTS ONLY</span>
+</div>
+</div>
+<!-- Session log (filled by console-live.js) -->
+<div id="session-log" class="font-code text-[9px] leading-relaxed space-y-1 text-slate-400 flex-1 min-h-[5rem] max-h-[24rem] overflow-y-auto custom-scroll pr-2" role="log" aria-live="polite"><div class="text-slate-500">Waiting for the first event…</div></div>
+</div>
+<!-- Master Backlit Action Control Punch Buttons (Right half - as seen in Image 3) -->
+<div class="col-span-12 lg:col-span-6 rounded-xl border border-void-700 bg-void-900/90 p-3 shadow-tactile-out flex flex-col justify-center">
+<div class="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
+<span class="font-bold text-slate-300 uppercase flex items-center gap-1.5">
+<i class="fa-solid fa-gamepad text-cyanGlow text-[10px]"></i>
+              MASTER DECK &amp; AUDIO INVESTIGATION
+            </span>
+<span id="tally" class="text-slate-500 font-code">TALLY: IDLE</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+<!-- PUNCH 1: START RF SWEEP -->
+<button class="py-2.5 px-3 rounded-lg bg-void-850 hover:bg-void-800 border-2 border-cyanGlow text-cyan-200 font-bold flex items-center justify-center gap-2 shadow-glow-cyan active:scale-95 transition-all">
+<i class="fa-solid fa-arrows-spin text-cyanGlow"></i>
+<span>START SWEEP</span>
+</button>
+<!-- PUNCH 2: REC EVP (Glowing Blood Tally Red) -->
+<button class="py-2.5 px-3 rounded-lg bg-red-950/80 hover:bg-red-900 border-2 border-spectralRed text-red-100 font-bold flex items-center justify-center gap-2 shadow-glow-red active:scale-95 transition-all">
+<div class="w-3 h-3 rounded-full bg-spectralRed shadow-[0_0_8px_#ef4444]"></div>
+<span>REC EVP</span>
+</button>
+<!-- PUNCH 3: CALIBRATE RESONANCE -->
+<button class="py-2.5 px-3 rounded-lg bg-void-850 hover:bg-void-800 border-2 border-phosphor text-phosphorBright font-bold flex items-center justify-center gap-2 shadow-glow-green active:scale-95 transition-all">
+<i class="fa-solid fa-compass-drafting text-phosphor"></i>
+<span>CALIBRATE</span>
+</button>
+<!-- PUNCH 4: EXPORT WAV / SAVE -->
+<button class="py-2.5 px-3 rounded-lg bg-void-850 hover:bg-void-800 border-2 border-slate-600 hover:border-slate-400 text-slate-200 font-bold flex items-center justify-center gap-2 shadow-tactile-out active:scale-95 transition-all">
+<i class="fa-solid fa-floppy-disk text-slate-300"></i>
+<span>SAVE WAV</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- ======================================================================= -->
+<!-- LOWER WORKSTATION CHASSIS FOOTER & PRESET SELECTOR                     -->
+<!-- ======================================================================= -->
+<footer class="bg-gradient-to-r from-void-980 via-void-950 to-void-980 px-6 py-2.5 border-t-2 border-chassis-rim flex flex-wrap items-center justify-between gap-3 text-xs font-mono relative z-20">
+<!-- Preset Swatches Strip -->
+<div class="flex items-center gap-3">
+<span class="text-[10px] text-slate-400 uppercase font-semibold">SKIN:</span>
+<div class="flex items-center gap-2">
+<button data-skin="void" class="px-2.5 py-1 rounded bg-void-900 border border-void-700 text-slate-400 hover:text-slate-200 text-[10px]">Void Celestial</button>
+<button data-skin="military" class="px-2.5 py-1 rounded bg-void-900 border border-void-700 text-slate-400 hover:text-slate-200 text-[10px]">Military SDR-Green</button>
+<button data-skin="nebula" class="px-2.5 py-1 rounded bg-void-900 border border-void-700 text-slate-400 hover:text-slate-200 text-[10px]">Astral Nebula</button>
+<button data-skin="obsidian" class="px-2.5 py-1 rounded bg-void-900 border border-void-700 text-slate-400 hover:text-slate-200 text-[10px]">Obsidian KiwiSDR</button>
+</div>
+</div>
+<!-- Station Identity Info -->
+<div class="text-[10px] text-slate-500 flex items-center gap-4">
+<span>WHISPERS OF THE SPIRIT • DEVELOPMENT PREVIEW</span>
+<span id="footer-status" class="text-cyan-400">SYSTEM READY</span>
+</div>
+</footer>
+</div>
+<!-- Micro-interactions Script -->
+<script data-purpose="console-interactivity">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Update UTC clock real-time
+      const utcElement = document.getElementById('utc-clock');
+      function updateTime() {
+        const now = new Date();
+        const hrs = String(now.getUTCHours()).padStart(2, '0');
+        const mins = String(now.getUTCMinutes()).padStart(2, '0');
+        const secs = String(now.getUTCSeconds()).padStart(2, '0');
+        if(utcElement) utcElement.textContent = `${hrs}:${mins}:${secs} UTC`;
+      }
+      setInterval(updateTime, 1000);
+      updateTime();
+    });
+  </script>
+</body></html>
