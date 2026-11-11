@@ -27,6 +27,7 @@
     <!-- Extra "Material" skin for the phone only. -->
     <EmbeddedResource Condition="'$(TargetFramework)' == 'net10.0-android'" Include="WebConsole\phone-material.js" LogicalName="Whispers.PhoneMaterial.js" />
     <EmbeddedResource Condition="'$(TargetFramework)' == 'net10.0-android'" Include="WebConsole\phone-i18n.js" LogicalName="Whispers.PhoneI18n.js" />
+    <EmbeddedResource Condition="'$(TargetFramework)' == 'net10.0-android'" Include="WebConsole\phone-sls.js" LogicalName="Whispers.PhoneSls.js" />
     <MauiIcon Condition="'$(TargetFramework)' != 'net10.0-windows10.0.19041.0'" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#050b13" />
     <!-- Windows window, taskbar and .exe use the same haunted-radio artwork as the Android launcher. -->
     <MauiIcon Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'" Include="Resources\AppIcon\whispers_windows.png" />

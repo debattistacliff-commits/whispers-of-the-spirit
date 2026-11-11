@@ -20,12 +20,17 @@ public partial class MainPage
             "\n};window.__installWhispersDeck=function(){" + Resource("Whispers.ReviewDeck.js") + "\n};</script></body>");
         // The "Material" skin is embedded only in the Android build; other builds skip it.
         string? phoneSkin = OptionalResource("Whispers.PhoneMaterial.js");
-        if (phoneSkin is not null) phoneSkin = (OptionalResource("Whispers.PhoneI18n.js") ?? "") + "\n" + phoneSkin;
+        if (phoneSkin is not null) phoneSkin = (OptionalResource("Whispers.PhoneI18n.js") ?? "") + "\n" + phoneSkin + "\n" + (OptionalResource("Whispers.PhoneSls.js") ?? "");
         if (phoneSkin is not null)
             html = html.Replace("</body>", "<script>window.__installWhispersPhone=function(){" + phoneSkin + "\n};</script></body>");
         consoleWebView = new WebView
         {
+#if ANDROID
+            // Secure page address so the SLS camera may use the phone camera (see SlsWebHost).
+            Source = new HtmlWebViewSource { Html = html, BaseUrl = SlsWebHost.BaseUrl },
+#else
             Source = new HtmlWebViewSource { Html = html },
+#endif
             BackgroundColor = Color.FromArgb("020508")
         };
         consoleWebView.Navigating += ConsoleNavigating;
@@ -115,6 +120,12 @@ public partial class MainPage
                     }
                     break;
                 case "record": RecordRadio(null, EventArgs.Empty); break;
+#if ANDROID
+                case "slsmark":
+                    double markedAt = MarkSlsFigure(query.GetValueOrDefault("value", ""));
+                    await consoleWebView.EvaluateJavaScriptAsync($"window.__whispersSlsMarked?.({markedAt.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)})");
+                    return;
+#endif
                 case "speed":
                     if (double.TryParse(query.GetValueOrDefault("value"), System.Globalization.CultureInfo.InvariantCulture, out var speed))
                         Volatile.Write(ref replaySpeed, Math.Clamp(speed, .1, 1));

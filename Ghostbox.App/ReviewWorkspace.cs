@@ -115,7 +115,11 @@ public partial class MainPage
             rangeStart.Text="0";rangeEnd.Text=reviewDuration.ToString("F6",CultureInfo.InvariantCulture);
             await Task.Run(()=>reviewDrawing.Load(canonical,reviewDuration),active.Token);reviewGraph.Invalidate();
             reviewFileLabel.Text=Path.GetFileName(file)+$" • {reviewDuration:F2}s • original preserved";
-            compareAudio.SelectedIndex=0;investigationMarkers.Clear();UpdateReviewMarkers();
+            compareAudio.SelectedIndex=0;investigationMarkers.Clear();
+#if ANDROID
+            LoadSavedEventMarkers(file);
+#endif
+            UpdateReviewMarkers();
             processState.Text="Original loaded • choose tools, then Apply preview";
             await DeckLoadedAsync();
         }

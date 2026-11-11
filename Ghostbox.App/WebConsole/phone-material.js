@@ -135,12 +135,15 @@
     ['review', [studies[1], footer]],              // slow-down + skins
     ['review', [deckRow[1], deckRow[0]]],          // recordings / Review deck + session log
   ];
-  const sections = ['listen', 'effects', 'review'];
+  // SLS camera page (filled in by phone-sls.js; the camera runs only while this page is shown).
+  const slsPage = document.createElement('div'); slsPage.id = 'sls-page';
+  plan.push(['sls', [slsPage]]);
+  const sections = ['listen', 'effects', 'review', 'sls'];
 
   const pager = document.createElement('div');
   pager.id = 'phone-pager';
   const pageEls = plan.map(([section, items]) => {
-    const page = document.createElement('div'); page.className = 'pp-page'; page.dataset.section = section;
+    const page = document.createElement('div'); page.className = 'pp-page' + (section === 'sls' ? ' pp-fill' : ''); page.dataset.section = section;
     const inner = document.createElement('div'); inner.className = 'pp-inner';
     items.filter(Boolean).forEach(item => inner.appendChild(item));
     page.appendChild(inner); pager.appendChild(page);
@@ -157,6 +160,9 @@
   #phone-pager .pp-page{flex:0 0 100%;height:100%;overflow-y:auto;overflow-x:hidden;padding:10px;transform:translateX(var(--pp-x,0px));will-change:transform}
   #phone-pager.pp-anim .pp-page{transition:transform .28s cubic-bezier(.2,.8,.2,1)}
   #phone-pager .pp-inner{display:flex;flex-direction:column;gap:12px}
+  #phone-pager .pp-fill{padding:0;overflow:hidden}
+  #phone-pager .pp-fill .pp-inner{height:100%;gap:0}
+  #phone-pager .pp-fill .pp-inner > *{height:100%}
   #phone-pager .pp-inner > *{flex:none!important;width:100%!important;margin:0!important}
   #phone-pager footer{border-radius:12px;border:1px solid #1e2a3c}
   #phone-pager footer div{flex-wrap:wrap}
@@ -164,16 +170,16 @@
     font-family:"Share Tech Mono","JetBrains Mono",monospace;box-shadow:0 -6px 18px rgba(0,0,0,.7)}
   #phone-bar .st{color:#7dd3fc;font-size:12px;padding:5px 10px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #phone-bar .dots{display:flex;justify-content:center;gap:6px;padding:7px 10px 0}
-  #phone-bar .dots i{font-style:normal;min-width:38px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;
+  #phone-bar .dots i{font-style:normal;min-width:33px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;
     font-size:16px;font-weight:700;color:#94a3b8;background:#0f1724;border:1px solid #1e2a3c;box-shadow:0 2px 4px rgba(0,0,0,.7);transition:all .15s}
-  #phone-bar .dots i.gap{margin-left:12px}
+  #phone-bar .dots i.gap{margin-left:9px}
   #phone-bar .dots i.on{color:#04120b;background:#00ff88;border-color:#00ff88;box-shadow:0 0 10px rgba(0,255,136,.5)}
   #phone-bar .act{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 10px}
   #phone-bar .act button{border-radius:10px;padding:10px 0;font-size:15px;font-weight:700;letter-spacing:.06em;border:1px solid #38bdf8;color:#a5f3fc;background:#0b1622;
     box-shadow:0 3px 7px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.12)}
   #phone-bar .act .rec{border-color:#ef4444;color:#fca5a5;background:#22090c}
-  #phone-bar .tabs{display:grid;grid-template-columns:1fr 1fr 1fr 64px;border-top:1px solid #1e2a3c}
-  #phone-bar .tabs button{padding:10px 0;font-size:14px;letter-spacing:.08em;color:#64748b;background:none;border:0;border-top:3px solid transparent}
+  #phone-bar .tabs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 56px;border-top:1px solid #1e2a3c}
+  #phone-bar .tabs button{padding:10px 0;font-size:13px;letter-spacing:.03em;white-space:nowrap;overflow:hidden;color:#64748b;background:none;border:0;border-top:3px solid transparent}
   #phone-bar .tabs button[aria-selected="true"]{color:#00ff88;border-top-color:#00ff88}
   html.whispers-ember #phone-bar{background:#0f1012;border-top-color:#2c2d33}
   html.whispers-ember #phone-bar .st{color:#ffb27a}
@@ -206,7 +212,9 @@
     dots.forEach((d, i) => d.classList.toggle('on', i === index));
     bar.querySelectorAll('[data-go]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.go === plan[index][0])));
     try { sessionStorage.setItem('whispers-page', String(index)); } catch (e) { }
+    window.dispatchEvent(new CustomEvent('whispers-page', { detail: { index, section: plan[index][0] } }));
   };
+  window.__whispersGoToSection = section => goTo(plan.findIndex(p => p[0] === section), true);
   let lastSlide = 0;
   const place = (offset, animate) => {
     pager.classList.toggle('pp-anim', !!animate);
@@ -259,6 +267,7 @@
   const fit = () => {
     root.style.setProperty('--pp-h', (window.innerHeight - bar.offsetHeight) + 'px');
     pageEls.forEach(page => {
+      if (page.classList.contains('pp-fill')) return;
       const inner = page.firstChild;
       inner.style.zoom = '';
       const room = page.clientHeight - 20, need = inner.scrollHeight;
@@ -406,6 +415,7 @@
       el.setAttribute('placeholder', translateText(el.dataset.phPlaceholder));
     });
   };
+  window.__whispersTr = text => translateText(text);
   window.__whispersOriginalText = el => {
     let out = ''; const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n;
     while ((n = w.nextNode())) out += originals.get(n) ?? n.data;
@@ -458,6 +468,24 @@
   html.whispers-ember #phone-settings .opt{background:#1c1d21;border-color:#2c2d33}
   html.whispers-ember #phone-settings .opt[aria-pressed="true"]{border-color:#ff8a3d;background:#2a1810;color:#ffd7b8;box-shadow:0 0 10px rgba(255,122,42,.35)}
   html.whispers-ember #phone-settings summary b{background:#2a1810;color:#ffb27a}
+  #phone-settings .sls-sec{border-color:#16a34a}
+  #phone-settings .sls-btn{--g:0,255,136;--c:#4ade80;--l:#bbf7d0;--bg:#03140a;width:100%;display:flex;align-items:center;gap:14px;padding:12px;border-radius:13px;
+    border:1px solid rgb(var(--g));background:var(--bg);text-align:left;animation:sls-pulse 2.2s ease-in-out infinite}
+  #phone-settings .sls-btn:active{transform:scale(.98)}
+  #phone-settings .radar{position:relative;flex:none;width:64px;height:64px;border-radius:50%;border:2px solid var(--c);overflow:hidden;
+    background:radial-gradient(circle,rgba(var(--g),.18),rgba(0,0,0,.9) 70%)}
+  #phone-settings .radar i{display:block;position:absolute;inset:0;border-radius:50%;animation:sls-sweep 2.4s linear infinite;
+    background:conic-gradient(from 0deg,rgba(var(--g),.6),rgba(var(--g),.15) 50deg,transparent 80deg)}
+  #phone-settings .radar svg{position:absolute;inset:0}
+  #phone-settings .radar g{stroke:var(--l)}
+  #phone-settings .radar .ring{stroke:rgba(var(--g),.35)}
+  #phone-settings .sls-btn .txt{display:flex;flex-direction:column;gap:3px}
+  #phone-settings .sls-btn b{color:var(--l);letter-spacing:.07em;font-size:1.05em}
+  #phone-settings .sls-btn small{color:var(--c);font-size:.9em}
+  @keyframes sls-sweep{to{transform:rotate(360deg)}}
+  @keyframes sls-pulse{0%,100%{box-shadow:0 0 8px rgba(var(--g),.3)}50%{box-shadow:0 0 20px rgba(var(--g),.75)}}
+  html.whispers-ember #phone-settings .sls-sec{border-color:#9a3412}
+  html.whispers-ember #phone-settings .sls-btn{--g:255,122,42;--c:#ff8a3d;--l:#ffe0c8;--bg:#1a0f08}
   `;
   const panel = document.createElement('div');
   panel.id = 'phone-settings'; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.dataset.noTranslate = '1';
@@ -480,6 +508,12 @@
       '<section><h3>🔠 ' + esc(t.textSize) + '</h3><div class="grid" style="grid-template-columns:1fr 1fr 1fr">' +
         [1, 1.15, 1.3].map((v, i) => '<button type="button" class="opt" data-size="' + v + '" aria-pressed="' + (Math.abs(textScale - v) < .01) + '" style="justify-content:center;font-size:' + (0.9 + i * 0.15) + 'em">' + esc(t.sizes[i]) + '</button>').join('') +
       '</div></section>' +
+      (window.__whispersSlsInstalled ? '<section class="sls-sec"><h3>📷 ' + esc(t.slsTitle || 'SLS camera') + '</h3>' +
+        '<button type="button" class="sls-btn" data-sls>' +
+          '<span class="radar"><i></i><svg viewBox="0 0 56 56" width="100%" height="100%"><g fill="none" stroke-width="1.6"><circle cx="28" cy="28" r="17" class="ring"/>' +
+          '<circle cx="28" cy="16" r="4"/><path d="M28 20 V33 M21 25 H35 M28 33 L23 44 M28 33 L33 44"/></g></svg></span>' +
+          '<span class="txt"><b>' + esc(t.slsOpen || 'OPEN SLS CAMERA') + '</b><small>● ' + esc(t.slsReady || 'scanner ready') + '</small></span>' +
+        '</button><p class="note">' + esc(t.slsNote || 'Finds body-like shapes, not spirits.') + '</p></section>' : '') +
       '<section><h3>📖 ' + esc(t.guide) + '</h3>' +
         t.steps.map((s, i) => '<details' + (i === 0 ? ' open' : '') + '><summary><b>' + (i + 1) + '</b>' + esc(s[0]) + '</summary><p>' + esc(s[1]) + '</p></details>').join('') +
         '<p class="note">💡 ' + esc(t.tip) + '</p></section>' +
@@ -495,6 +529,7 @@
   panel.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     if (b.hasAttribute('data-close')) panel.classList.remove('open');
+    else if (b.hasAttribute('data-sls')) { panel.classList.remove('open'); window.__whispersGoToSection?.('sls'); }
     else if (b.dataset.lang) setLanguage(b.dataset.lang);
     else if (b.dataset.theme) { document.querySelector('[data-skin="' + b.dataset.theme + '"]')?.click(); setTimeout(renderSettings, 50); }
     else if (b.dataset.size) { textScale = Number(b.dataset.size); try { localStorage.setItem('whispers-textsize', String(textScale)); } catch (err) { } applyScale(); renderSettings(); }

@@ -18,6 +18,9 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+#if ANDROID
+		SlsWebHost.Register(); // SLS camera: secure page address, offline engine files, camera permission
+#endif
 
 		return builder.Build();
 	}
