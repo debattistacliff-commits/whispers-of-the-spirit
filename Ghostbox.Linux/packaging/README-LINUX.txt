@@ -1,4 +1,4 @@
-Whispers of the Spirit 2.0 for Linux (64-bit PC)
+Whispers of the Spirit 2.3 for Linux (64-bit PC)
 ================================================
 
 1. Install the system parts it uses (once):
@@ -21,6 +21,10 @@ Whispers of the Spirit 2.0 for Linux (64-bit PC)
 
 2. Start it: open this folder and run   ./whispers-of-the-spirit
    To add it to your applications menu:  ./install-desktop-entry.sh
+
+3. The gear button (top right) opens Settings: language (English, Malti, Italiano,
+   Español, Français, Deutsch), theme (including Material and Ember), text size,
+   a short guide and About.
 
 Where things are kept:
    Recordings and review work   ~/.local/share/whispers-of-the-spirit

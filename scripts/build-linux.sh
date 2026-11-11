@@ -3,7 +3,7 @@
 # Run from anywhere on Linux (or WSL) with the .NET 10 SDK installed:  ./scripts/build-linux.sh
 set -euo pipefail
 
-version="2.0"
+version="2.3"
 name="Whispers-of-the-Spirit-$version-Linux-x64"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 out="${1:-$root/out}"

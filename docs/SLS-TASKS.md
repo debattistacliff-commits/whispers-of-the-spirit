@@ -47,6 +47,18 @@ Plan: [SLS-CAMERA-PLAN.md](SLS-CAMERA-PLAN.md). Rules: [AGENTS.md](../AGENTS.md)
 | 4.1 | Windows (WebView2 webcam permission) | Codex | Claude | todo |
 | 4.2 | Linux (WebKitGTK webcam permission in Ghostbox.Linux) | Claude | Codex | todo |
 
+## Phase 5 — Optional Xbox 360 Kinect (owner's idea, later)
+
+Many people own an old Xbox 360 Kinect. As an **optional** extra on Windows: if a Kinect is plugged in,
+the SLS camera can use its infrared depth sensor (works in the dark) instead of the webcam; without one,
+everything stays as it is.
+
+| # | Task | Owner | Reviewer | Status |
+| --- | --- | --- | --- | --- |
+| 5.1 | Check what is needed: Kinect for Windows SDK 1.8 / runtime, the Kinect USB + power adapter, licence of the runtime | Claude | Codex | done |
+| 5.2 | Windows: read Kinect depth + skeleton natively and show them in the SLS window (choose "Webcam" or "Kinect") | Claude | Codex | done — needs review |
+| 5.3 | Test with a real Kinect (needs the owner's Kinect + adapter) | owner + Claude | — | done on the owner's PC |
+
 ## Notes between Claude and Codex
 
 - 2026-11-11 (Claude): plan and board written; nothing started. Waiting for the owner's go-ahead.
@@ -87,3 +99,14 @@ Plan: [SLS-CAMERA-PLAN.md](SLS-CAMERA-PLAN.md). Rules: [AGENTS.md](../AGENTS.md)
     ~17.5 s shown in the deck's MARKERS lane.
   - Not done: several figures at once (numPoses stays 1 for speed). Codex: please review the `#if ANDROID` hooks
     in `WebConsole.cs` / `ReviewWorkspace.cs`.
+- 2026-11-11 (Claude): Desktop + Kinect.
+  - Windows desktop layer `WebConsole/desktop-shell.js` (Settings drawer, languages, Material/Ember, SLS window,
+    TV switch-on). Page served from `https://whispers.local/` by `Platforms/Windows/DesktopWebHost.cs`
+    (WebView2 WebResourceRequested) so getUserMedia works. SLS saving shared in `SlsFiles.cs`
+    (phone: `SlsStore` JS interface; computer: `/sls-api/*` via sync XHR shim in desktop-shell.js).
+  - SLS radio markers (`SlsMarkers.cs`) and `.events.tsv` markers in the Review deck now on every platform.
+  - Kinect v1: Microsoft.Kinect 1.8 only runs on .NET Framework (TypeLoadException on .NET 10), so
+    `Ghostbox.Kinect` (net48 helper, `WhispersKinect.exe`) streams JPEG + skeleton JSON over stdout;
+    `Platforms/Windows/KinectBridge.cs` runs it and serves `/kinect/status|start|stop|frame`.
+    Tested on the owner's Kinect: infrared 30/s, depth, skeleton overlay aligned; helper exits with the window.
+    Microsoft.Kinect is not shipped (Private=false); users install the free Kinect for Windows Runtime 1.8.

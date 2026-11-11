@@ -25,6 +25,10 @@
     <EmbeddedResource Include="..\Ghostbox.App\WebConsole\review-deck.js" LogicalName="Whispers.ReviewDeck.js" />
     <EmbeddedResource Include="..\Ghostbox.App\WebConsole\console-live.js" LogicalName="Whispers.ConsoleLive.js" />
     <EmbeddedResource Include="..\Ghostbox.App\WebConsole\console.offline.css" LogicalName="Whispers.Console.css" />
+    <!-- Settings, languages, Material/Ember skins (and the SLS camera where the web view allows the webcam). -->
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\desktop-shell.js" LogicalName="Whispers.DesktopShell.js" />
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\phone-i18n.js" LogicalName="Whispers.PhoneI18n.js" />
+    <EmbeddedResource Include="..\Ghostbox.App\WebConsole\phone-sls.js" LogicalName="Whispers.PhoneSls.js" />
     <None Include="..\assets\icon\whispers-of-the-spirit-512.png" Link="whispers-of-the-spirit.png" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\Licenses\*" Link="Licenses\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\THIRD-PARTY.md" Link="Licenses\THIRD-PARTY.md" CopyToOutputDirectory="PreserveNewest" />

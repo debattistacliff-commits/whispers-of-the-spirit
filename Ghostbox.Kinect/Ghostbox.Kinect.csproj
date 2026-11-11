@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Small helper for the Windows app: reads an Xbox 360 Kinect / Kinect for Windows (v1) through the
+       Kinect for Windows Runtime 1.8, which only runs on the .NET Framework. The app starts it when the
+       SLS camera uses the Kinect. Built only where the Kinect for Windows SDK 1.8 is installed. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyName>WhispersKinect</AssemblyName>
+    <RootNamespace>Ghostbox.Kinect</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <!-- Not copied: the Kinect for Windows Runtime installs Microsoft.Kinect in the global assembly cache. -->
+    <Reference Include="Microsoft.Kinect">
+      <HintPath>$(ProgramFiles)\Microsoft SDKs\Kinect\v1.8\Assemblies\Microsoft.Kinect.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+</Project>

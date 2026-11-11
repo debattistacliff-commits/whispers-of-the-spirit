@@ -40,10 +40,10 @@ static class SlsWebHost
             // Saved SLS recordings and snapshots (History screen).
             if (path.StartsWith("sls-files/", StringComparison.Ordinal))
             {
-                string? file = SlsStore.PathOf(path["sls-files/".Length..]);
+                string? file = SlsFiles.PathOf(path["sls-files/".Length..]);
                 if (file is null || !File.Exists(file))
                     return new WebResourceResponse("text/plain", "utf-8", 404, "Not Found", headers, new MemoryStream());
-                string type = Path.GetExtension(file) == ".webm" ? "video/webm" : "image/jpeg";
+                string type = SlsFiles.ContentType(file);
                 return new WebResourceResponse(type, null, 200, "OK", headers, File.OpenRead(file));
             }
             if (!path.StartsWith("sls/", StringComparison.Ordinal) || path.Contains(".."))

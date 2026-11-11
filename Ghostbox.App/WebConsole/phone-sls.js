@@ -8,7 +8,9 @@
   const page = document.getElementById('sls-page');
   if (!page) return;
   window.__whispersSlsInstalled = true;
-  const BASE = 'https://appassets.androidplatform.net/sls/';
+  // Phone: the app's secure page address (SlsWebHost). Computer: the page's own address (DesktopWebHost).
+  const desktop = document.documentElement.classList.contains('whispers-desktop');
+  const BASE = (desktop ? location.origin + '/' : 'https://appassets.androidplatform.net/') + 'sls/';
   const tr = text => (window.__whispersTr ? window.__whispersTr(text) : text);
 
   const css = `
@@ -24,7 +26,12 @@
   #sls-page .sw[aria-checked="true"] i::after{left:20px;background:radial-gradient(circle at 38% 32%,#eafff4,var(--sl) 60%);box-shadow:0 0 8px var(--sl)}
   #sls-page .view{position:relative;flex:1;min-height:0;overflow:hidden;background:#03140a}
   #sls-page video,#sls-page canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  #sls-page video{filter:var(--sls-filter,none)}
+  #sls-page video,#sls-page canvas.kin{filter:var(--sls-filter,none)}
+  #sls-page canvas[hidden],#sls-page video[hidden]{display:none}
+  #sls-page .src{display:flex;gap:4px;margin-left:auto;margin-right:12px}
+  #sls-page .src[hidden]{display:none}
+  #sls-page .src button{font:inherit;font-size:calc(11px * var(--tz,1));letter-spacing:.06em;padding:5px 10px;border-radius:8px;border:1px solid var(--sd);background:var(--sb);color:#94a3b8;cursor:pointer}
+  #sls-page .src button[aria-pressed="true"]{color:var(--sl);border-color:var(--sl);box-shadow:0 0 8px var(--sl)}
   #sls-page.front video,#sls-page.front canvas{transform:scaleX(-1)}
   #sls-page .tools{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:8px}
   #sls-page .tools button{width:44px;height:44px;border-radius:50%;border:1px solid var(--sd);background:rgba(2,8,5,.75);color:var(--sl);font-size:19px;
@@ -127,8 +134,9 @@
 
   page.innerHTML =
     '<div class="hd"><span class="ttl">📷 SLS CAMERA</span><span class="lamp" data-lamp data-no-translate>● …</span>' +
+    '<div class="src" data-src hidden data-no-translate></div>' +
     '<button type="button" class="sw" data-detect role="switch" aria-checked="true"><span>DETECTION</span><i></i></button></div>' +
-    '<div class="view"><video playsinline muted poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video><canvas></canvas>' +
+    '<div class="view"><video playsinline muted poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video><canvas class="kin" hidden></canvas><canvas class="ovl"></canvas>' +
     '<div class="info" data-info data-no-translate></div><div class="fname" data-fname data-no-translate></div>' +
     '<div class="tools"><button type="button" data-flip aria-label="Flip camera">⇄</button><button type="button" data-torch aria-label="Torch" hidden>🔦</button>' +
     '<button type="button" data-filter aria-label="Filter">◐</button><button type="button" data-bell aria-label="Alert sound">🔕</button></div><div class="msg" data-msg hidden></div>' +
@@ -144,7 +152,8 @@
     '<div class="hlist" data-hlist></div></div>' +
     '<div class="player" data-player hidden data-no-translate><div data-pbody style="flex:1;min-height:0;display:flex"></div><button type="button" data-pclose></button></div>';
   const $ = s => page.querySelector(s);
-  const video = $('video'), canvas = $('canvas'), ctx = canvas.getContext('2d');
+  const video = $('video'), canvas = $('canvas.ovl'), ctx = canvas.getContext('2d');
+  const kcan = $('canvas.kin'), kctx = kcan.getContext('2d');
   const info = $('[data-info]'), msg = $('[data-msg]'), lamp = $('[data-lamp]'), fname = $('[data-fname]');
   const bars = [...page.querySelectorAll('[data-bar] i')], scoreRead = $('[data-score]');
   const sens = $('[data-sens]'), sensRead = $('[data-sens-read]'), detectSw = $('[data-detect]'), torchBtn = $('[data-torch]');
@@ -153,8 +162,11 @@
   // Saved choices
   const load = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
   const save = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) { } };
-  let facing = load('sls-facing', 'environment'), filterKey = load('sls-filter-key', document.documentElement.classList.contains('whispers-ember') ? 'EMBER' : 'GREEN');
+  let facing = load('sls-facing', desktop ? 'user' : 'environment'), filterKey = load('sls-filter-key', document.documentElement.classList.contains('whispers-ember') ? 'EMBER' : 'GREEN');
   let detecting = load('sls-detect', '1') === '1';
+  // Picture source. Phone: its camera. Computer: the webcam, or a Kinect (infrared or depth) when the app has the Kinect helper.
+  let source = desktop ? load('sls-source', 'webcam') : 'webcam';
+  const kinect = () => source !== 'webcam';
   sens.value = load('sls-sens', '60');
 
   let stream = null, active = false, landmarker = null, vision = null, loading = null, engine = '', torchOn = false;
@@ -173,6 +185,7 @@
   };
   const showSens = () => { sensRead.textContent = sens.value + '%'; sens.style.setProperty('--p', sens.value + '%'); };
   const showDetect = () => detectSw.setAttribute('aria-checked', String(detecting));
+  const mirrored = () => !kinect() && facing === 'user';
   const showLamp = () => { lamp.classList.toggle('on', !!stream); lamp.textContent = stream ? '● ' + tr('SCANNING') : '○ ' + tr('CAMERA OFF'); };
 
   const loadEngine = async () => {
@@ -190,15 +203,42 @@
     try { return await loading; } finally { loading = null; }
   };
 
+  // The current picture and its size (webcam video, or the latest Kinect picture).
+  const frame = () => (kinect() ? kcan : video);
+  const fw = () => (kinect() ? kcan.width : video.videoWidth), fh = () => (kinect() ? kcan.height : video.videoHeight);
+  let kFrame = 0, kSeen = 0, kPeople = [], kPolling = false;
+  const kinectApi = (action, args) => fetch(location.origin + '/kinect/' + action + (args ? '?' + new URLSearchParams(args) : '')).then(r => (r.ok ? r.text() : ''), () => '');
+  const pollKinect = async () => {
+    if (kPolling) return; kPolling = true;
+    try {
+      while (active && kinect() && stream) {
+        const r = await fetch(location.origin + '/kinect/frame?after=' + kFrame).catch(() => null);
+        if (!r || r.status !== 200) { await new Promise(ok => setTimeout(ok, 15)); continue; }
+        const no = Number(r.headers.get('X-Frame')) || kFrame + 1;
+        try { kPeople = JSON.parse(r.headers.get('X-Skeleton') || '{}').people || []; } catch (e) { kPeople = []; }
+        const bmp = await createImageBitmap(await r.blob());
+        if (kcan.width !== bmp.width || kcan.height !== bmp.height) { kcan.width = bmp.width; kcan.height = bmp.height; }
+        kctx.drawImage(bmp, 0, 0); if (bmp.close) bmp.close(); kFrame = no;
+      }
+    } finally { kPolling = false; }
+  };
   const stopCamera = () => {
     if (stream) stream.getTracks().forEach(t => t.stop());
+    if (stream && stream.kinect) kinectApi('stop');
     stream = null; video.srcObject = null; torchOn = false; torchBtn.hidden = true;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     showLamp();
   };
   const startCamera = async () => {
     stopCamera();
-    page.classList.toggle('front', facing === 'user');
+    page.classList.toggle('front', mirrored());
+    video.hidden = kinect(); kcan.hidden = !kinect();
+    if (kinect()) {
+      const status = await kinectApi('start', { mode: source === 'kinect-depth' ? 'depth' : 'ir' });
+      if (status !== 'ready') { const e = new Error(status); e.name = 'KinectError'; throw e; }
+      stream = { kinect: true, getTracks: () => [] }; kFrame = 0; kSeen = 0; kPeople = [];
+      pollKinect(); showLamp(); return;
+    }
     stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: facing, width: { ideal: 640 }, height: { ideal: 480 } } });
     video.srcObject = stream;
     await video.play();
@@ -211,8 +251,12 @@
   const minScore = () => Math.round(85 - 0.7 * Number(sens.value));     // 85% … 15%
   const jointMin = () => 0.65 - 0.45 * Number(sens.value) / 100;          // 0.65 … 0.20
 
+  // Kinect v1 joints: 0 hip centre, 1 spine, 2 shoulder centre, 3 head, 4-7 left arm, 8-11 right arm, 12-15 left leg, 16-19 right leg.
+  const KINECT_BONES = [[0, 1], [1, 2], [2, 3], [2, 4], [4, 5], [5, 6], [6, 7], [2, 8], [8, 9], [9, 10], [10, 11],
+    [0, 12], [12, 13], [13, 14], [14, 15], [0, 16], [16, 17], [17, 18], [18, 19]].map(([start, end]) => ({ start, end }));
+  const kinectResult = () => ({ landmarks: kPeople.map(joints => joints.map(([x, y, st]) => ({ x, y, visibility: st === 2 ? 1 : st === 1 ? 0.55 : 0 }))) });
   const draw = result => {
-    const w = video.videoWidth, h = video.videoHeight;
+    const w = fw(), h = fh();
     if (!w || !h) return;
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
     ctx.clearRect(0, 0, w, h);
@@ -227,7 +271,7 @@
       if (seen.length < 6 || score < minScore()) return;
       figures++;
       ctx.lineWidth = Math.max(2, w / 160); ctx.strokeStyle = line; ctx.shadowColor = line; ctx.shadowBlur = 10;
-      for (const c of vision.PoseLandmarker.POSE_CONNECTIONS) {
+      for (const c of (kinect() ? KINECT_BONES : vision.PoseLandmarker.POSE_CONNECTIONS)) {
         const a = points[c.start], b = points[c.end];
         if ((a.visibility ?? 1) < jm || (b.visibility ?? 1) < jm) continue;
         ctx.beginPath(); ctx.moveTo(a.x * w, a.y * h); ctx.lineTo(b.x * w, b.y * h); ctx.stroke();
@@ -242,10 +286,10 @@
         ctx.beginPath(); ctx.moveTo(x, y + dy * k); ctx.lineTo(x, y); ctx.lineTo(x + dx * k, y); ctx.stroke();
       }
       const label = `${tr('FIGURE')} ${n + 1} · ${score}%`, fs = Math.round(w / 28);
-      ctx.save(); if (facing === 'user') { ctx.translate(w, 0); ctx.scale(-1, 1); }
+      ctx.save(); if (mirrored()) { ctx.translate(w, 0); ctx.scale(-1, 1); }
       ctx.font = `${fs}px monospace`; ctx.fillStyle = line;
       const tw = ctx.measureText(label).width;
-      const lx = Math.min(Math.max(8, facing === 'user' ? w - x1 : x0), w - tw - 8);
+      const lx = Math.min(Math.max(8, mirrored() ? w - x1 : x0), w - tw - 8);
       ctx.fillText(label, lx, Math.min(Math.max(fs + 6, y0 - 6), h - 8));
       ctx.restore();
     });
@@ -256,7 +300,8 @@
     const lit = Math.round(shown / 10);
     bars.forEach((b, i) => b.classList.toggle('on', i < lit));
     scoreRead.textContent = Math.round(shown) + '%';
-    const lines = [`${tr('FIGURES')} ${figures}`, `${tr('SPEED')} ${rate} / s · ${engine || '…'}`, facing === 'user' ? tr('FRONT CAMERA') : tr('BACK CAMERA')];
+    const lines = [`${tr('FIGURES')} ${figures}`, `${tr('SPEED')} ${rate} / s · ${kinect() ? 'KINECT' : engine || '…'}`, source === 'kinect-ir' ? 'KINECT · ' + tr('INFRARED') : source === 'kinect-depth' ? 'KINECT · ' + tr('DEPTH') :
+      desktop ? tr('WEBCAM') : facing === 'user' ? tr('FRONT CAMERA') : tr('BACK CAMERA')];
     const radioLine = radioRec ? `📻 ${tr('RADIO REC')} · ${tr('MARKERS')} ${radioMarks}` : '';
     info.textContent = (detecting ? lines.join('\n') : tr('DETECTION') + ': ' + tr('OFF')) + (radioLine ? '\n' + radioLine : '');
   };
@@ -268,7 +313,7 @@
   const motionBars = [...page.querySelectorAll('[data-motion] i')], motionRead = $('[data-motion-read]');
   let lastGrey = null, motion = 0, motionTick = 0;
   const motionStep = () => {
-    sctx.drawImage(video, 0, 0, 48, 36);
+    sctx.drawImage(frame(), 0, 0, 48, 36);
     const px = sctx.getImageData(0, 0, 48, 36).data, grey = new Uint8Array(48 * 36);
     let diff = 0;
     for (let i = 0, j = 0; j < grey.length; i += 4, j++) {
@@ -338,10 +383,12 @@
 
   const loop = () => {
     if (!active) return;
-    if (stream && video.readyState >= 2 && video.currentTime !== lastVideoTime) {
-      lastVideoTime = video.currentTime;
+    const fresh = kinect() ? stream && kFrame !== kSeen && kcan.width > 0 : stream && video.readyState >= 2 && video.currentTime !== lastVideoTime;
+    if (fresh) {
+      lastVideoTime = video.currentTime; kSeen = kFrame;
       const now = performance.now();
-      if (detecting && landmarker) {
+      if (detecting && kinect()) { draw(kinectResult()); count++; }
+      else if (detecting && landmarker) {
         try { draw(landmarker.detectForVideo(video, now)); count++; }
         catch (e) { say('Detection error: ' + e.message); }
       } else { figures = 0; best = 0; ctx.clearRect(0, 0, canvas.width, canvas.height); }
@@ -356,7 +403,7 @@
 
   // ---- Recording, snapshots and History (saved only on this phone, in the app's own folder) ----
   const store = window.WhispersSls || null;
-  const FILES = 'https://appassets.androidplatform.net/sls-files/';
+  const FILES = BASE.replace(/sls\/$/, 'sls-files/');
   const comp = document.createElement('canvas'), cctx = comp.getContext('2d');
   const pad = n => String(n).padStart(2, '0');
   const stampTime = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -364,13 +411,13 @@
 
   // One picture = filtered camera + skeleton overlay + date/time stamp (what the screen shows).
   const compose = () => {
-    const w = video.videoWidth, h = video.videoHeight;
+    const w = fw(), h = fh();
     if (!w || !h) return false;
     if (comp.width !== w || comp.height !== h) { comp.width = w; comp.height = h; }
     cctx.save();
-    if (facing === 'user') { cctx.translate(w, 0); cctx.scale(-1, 1); }
+    if (mirrored()) { cctx.translate(w, 0); cctx.scale(-1, 1); }
     cctx.filter = filter().css;
-    cctx.drawImage(video, 0, 0, w, h);
+    cctx.drawImage(frame(), 0, 0, w, h);
     cctx.filter = 'none';
     if (detecting) cctx.drawImage(canvas, 0, 0, w, h);
     cctx.restore();
@@ -426,7 +473,7 @@
       r.queue.then(() => {
         if (r.thumb) store.append(r.name, 'jpg', r.thumb);
         store.finish(r.name, JSON.stringify({ kind: 'video', time: r.when.toISOString(), durationS: Math.round((performance.now() - r.started) / 1000),
-          peak: r.peak, figuresMax: r.figuresMax, filter: filterKey, camera: facing === 'user' ? 'front' : 'back', place: '',
+          peak: r.peak, figuresMax: r.figuresMax, filter: filterKey, camera: kinect() ? source : desktop ? 'webcam' : facing === 'user' ? 'front' : 'back', place: '',
           markers: r.markers.slice(0, 200), radio: r.radio || radioRec }));
         say(r.ok ? 'Video saved in History.' : 'The video could not be saved completely.');
         setTimeout(() => { if (msg.textContent === tr('Video saved in History.')) say(''); }, 2500);
@@ -449,7 +496,7 @@
     const name = store.begin();
     if (!store.append(name, 'jpg', jpeg(0.92))) { say('The picture could not be saved.'); return; }
     store.finish(name, JSON.stringify({ kind: 'photo', time: new Date().toISOString(), durationS: 0, peak: figures ? best : 0, figuresMax: figures,
-      filter: filterKey, camera: facing === 'user' ? 'front' : 'back', place: '' }));
+      filter: filterKey, camera: kinect() ? source : desktop ? 'webcam' : facing === 'user' ? 'front' : 'back', place: '' }));
     flash();
   };
 
@@ -474,7 +521,7 @@
         '<div><div class="t">' + esc(isNaN(d) ? it.name : stampTime(d)) + '</div><div class="d">' + esc(facts) + '</div>' +
         '<input type="text" maxlength="60" data-place placeholder="' + esc(tr('Place name…')) + '" value="' + esc(it.place) + '"></div>' +
         '<div class="act"><button type="button" data-play data-kind="' + (video ? 'webm' : 'jpg') + '">▶ ' + esc(tr('OPEN')) + '</button>' +
-        '<button type="button" data-share>↗ ' + esc(tr('SHARE')) + '</button><button type="button" data-del>🗑 ' + esc(tr('DELETE')) + '</button></div></div>';
+        '<button type="button" data-share>' + (desktop ? '📂 ' + esc(tr('SHOW FILE')) : '↗ ' + esc(tr('SHARE'))) + '</button><button type="button" data-del>🗑 ' + esc(tr('DELETE')) + '</button></div></div>';
     }).join('');
   };
   const openHistory = () => { stopRecording(); stop(); renderHistory(); histBox.hidden = false; };
@@ -520,16 +567,22 @@
   const start = async () => {
     if (active) return;
     active = true; say(''); showLamp(); info.textContent = tr('Starting the camera…');
+    seenFrames = 0; figureOn = false;   // each opening starts fresh: a figure already in view counts as new
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) { say('The camera is not available on this screen.'); return; }
     try { await startCamera(); }
     catch (e) {
-      say(e.name === 'NotAllowedError' ? 'Camera permission was refused. Allow the camera for Whispers of the Spirit in Android Settings → Apps.' : 'The camera could not start.');
+      say(e.name === 'KinectError' ? (e.message === 'no-kinect' ? 'No Kinect found. Plug in the Kinect with its power adapter, then choose it again.' :
+        'The Kinect could not start. Install the Kinect for Windows Runtime 1.8 and plug in the Kinect with its power adapter.') :
+        e.name === 'NotAllowedError' ? (desktop ? 'Camera permission was refused. Allow the camera for this app in your computer’s privacy settings, then open the SLS camera again.' :
+        'Camera permission was refused. Allow the camera for Whispers of the Spirit in Android Settings → Apps.') : 'The camera could not start.');
       return;
     }
     if (!active) { stopCamera(); return; }   // page left while the camera was starting
-    info.textContent = tr('Loading the body-shape engine…');
-    try { await loadEngine(); }
-    catch (e) { say('The body-shape engine could not load.'); }
+    if (!kinect()) {
+      info.textContent = tr('Loading the body-shape engine…');
+      try { await loadEngine(); }
+      catch (e) { say('The body-shape engine could not load.'); }
+    }
     rateStart = performance.now(); count = 0; lastVideoTime = -1;
     requestAnimationFrame(loop);
   };
@@ -541,6 +594,22 @@
   window.addEventListener('whispers-page', e => { onPage = e.detail.section === 'sls'; if (canRun()) start(); else stop(); });
   document.addEventListener('visibilitychange', () => { if (canRun()) start(); else stop(); });
 
+  // Camera choice on the computer: shown only when the app has the Kinect helper.
+  const srcBox = $('[data-src]');
+  const SOURCES = [['webcam', 'WEBCAM'], ['kinect-ir', 'KINECT INFRARED'], ['kinect-depth', 'KINECT DEPTH']];
+  const renderSources = () => { srcBox.innerHTML = SOURCES.map(([k, l]) => '<button type="button" data-skey="' + k + '" aria-pressed="' + (k === source) + '">' + tr(l) + '</button>').join(''); };
+  if (desktop && location.protocol === 'https:') kinectApi('status').then(t => {
+    if (t !== 'helper') { if (kinect()) source = 'webcam'; return; }
+    renderSources(); srcBox.hidden = false;
+  });
+  srcBox.addEventListener('click', async e => {
+    const b = e.target.closest('[data-skey]'); if (!b || b.dataset.skey === source) return;
+    source = b.dataset.skey; save('sls-source', source); renderSources();
+    if (source === 'kinect-depth') { filterKey = 'PLAIN'; applyFilter(); renderMenu(); }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (active) { stopRecording(); active = false; stopCamera(); await new Promise(ok => setTimeout(ok, 300)); start(); }
+  });
+
   // Controls
   $('[data-flip]').addEventListener('click', async () => {
     facing = facing === 'user' ? 'environment' : 'user'; save('sls-facing', facing);
@@ -549,7 +618,7 @@
   $('[data-filter]').addEventListener('click', () => { renderMenu(); fmenu.hidden = !fmenu.hidden; });
   fmenu.addEventListener('click', e => {
     const b = e.target.closest('[data-fkey]'); if (!b) return;
-    filterKey = b.dataset.fkey; save('sls-filter-key', filterKey); applyFilter(); fmenu.hidden = true;
+    filterKey = b.dataset.fkey; save('sls-filter-key', filterKey); applyFilter(); renderMenu(); fmenu.hidden = true;
   });
   torchBtn.addEventListener('click', async () => {
     const track = stream?.getVideoTracks()[0]; if (!track) return;
@@ -562,5 +631,5 @@
 
   applyFilter(); showSens(); showDetect(); showLamp(); showMeters(); showBell();
   // Re-label on language change (texts in data-no-translate parts are built with tr()).
-  new MutationObserver(() => { applyFilter(); if (!rec) showLamp(); if (!histBox.hidden) renderHistory(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  new MutationObserver(() => { applyFilter(); if (!rec) showLamp(); if (!histBox.hidden) renderHistory(); if (!srcBox.hidden) renderSources(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 })();

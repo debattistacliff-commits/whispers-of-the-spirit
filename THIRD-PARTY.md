@@ -8,10 +8,14 @@ LibVLCSharp and the supplied LibVLC libraries are dynamically linked components.
 Native VLC plugins retain their upstream licenses and notices.
 
 Windows audio input/output uses [NAudio](https://github.com/naudio/NAudio) (MIT).
-The Android SLS camera (test) uses Google [MediaPipe Tasks Vision](https://github.com/google-ai-edge/mediapipe)
+The SLS camera (Android and Windows) uses Google [MediaPipe Tasks Vision](https://github.com/google-ai-edge/mediapipe)
 1.2.0 and the Pose Landmarker "lite" model, both under the
-[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). They are bundled inside the Android
-app and run on the phone without an internet connection.
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). They are bundled inside the apps and
+run on the device without an internet connection.
+The optional Kinect support on Windows uses Microsoft's Kinect for Windows Runtime 1.8, which the user
+installs separately; it is not included in the download. Kinect and Xbox are trademarks of Microsoft.
+The README illustrations of the SLS camera were rendered with [three.js](https://threejs.org/) (MIT);
+three.js is not part of the apps.
 The Linux version shows the console with [Photino.NET](https://github.com/tryphotino/photino.NET)
 (Apache-2.0), which uses the system's WebKitGTK; it plays and records sound through the
 system's PulseAudio/PipeWire client library and plays internet radio with the system's LibVLC.

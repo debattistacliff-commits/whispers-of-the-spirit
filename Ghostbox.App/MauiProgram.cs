@@ -20,6 +20,8 @@ public static class MauiProgram
 #endif
 #if ANDROID
 		SlsWebHost.Register(); // SLS camera: secure page address, offline engine files, camera permission
+#elif WINDOWS
+		DesktopWebHost.Register(); // console page and SLS engine files from a secure address (webcam allowed)
 #endif
 
 		return builder.Build();

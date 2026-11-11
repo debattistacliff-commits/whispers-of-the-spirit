@@ -21,6 +21,9 @@ public partial class MainPage
         // The "Material" skin is embedded only in the Android build; other builds skip it.
         string? phoneSkin = OptionalResource("Whispers.PhoneMaterial.js");
         if (phoneSkin is not null) phoneSkin = (OptionalResource("Whispers.PhoneI18n.js") ?? "") + "\n" + phoneSkin + "\n" + (OptionalResource("Whispers.PhoneSls.js") ?? "");
+        // Windows: the same extras in the classic layout (Settings drawer, skins, SLS camera window).
+        else if (OptionalResource("Whispers.DesktopShell.js") is { } desktopShell)
+            phoneSkin = (OptionalResource("Whispers.PhoneI18n.js") ?? "") + "\n" + desktopShell + "\n" + (OptionalResource("Whispers.PhoneSls.js") ?? "");
         if (phoneSkin is not null)
             html = html.Replace("</body>", "<script>window.__installWhispersPhone=function(){" + phoneSkin + "\n};</script></body>");
         consoleWebView = new WebView
@@ -28,6 +31,9 @@ public partial class MainPage
 #if ANDROID
             // Secure page address so the SLS camera may use the phone camera (see SlsWebHost).
             Source = new HtmlWebViewSource { Html = html, BaseUrl = SlsWebHost.BaseUrl },
+#elif WINDOWS
+            // Loaded by DesktopWebHost from a secure page address, so the SLS camera may use the webcam.
+            StyleId = DesktopWebHost.Prepare(html),
 #else
             Source = new HtmlWebViewSource { Html = html },
 #endif
@@ -120,12 +126,10 @@ public partial class MainPage
                     }
                     break;
                 case "record": RecordRadio(null, EventArgs.Empty); break;
-#if ANDROID
                 case "slsmark":
                     double markedAt = MarkSlsFigure(query.GetValueOrDefault("value", ""));
                     await consoleWebView.EvaluateJavaScriptAsync($"window.__whispersSlsMarked?.({markedAt.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)})");
                     return;
-#endif
                 case "speed":
                     if (double.TryParse(query.GetValueOrDefault("value"), System.Globalization.CultureInfo.InvariantCulture, out var speed))
                         Volatile.Write(ref replaySpeed, Math.Clamp(speed, .1, 1));
