@@ -8,6 +8,9 @@
     <ApplicationTitle>Whispers of the Spirit DEV</ApplicationTitle><ApplicationId>uk.whispers.development</ApplicationId>
     <ApplicationTitle Condition="'$(TargetFramework)' == 'net10.0-android'">Whispers of the Spirit</ApplicationTitle>
     <ApplicationDisplayVersion>2.0</ApplicationDisplayVersion><ApplicationVersion>11</ApplicationVersion>
+    <!-- Android 2.1: phone pages, Settings with languages, Material/Ember skins (Windows/Linux stay 2.0 for now). -->
+    <ApplicationDisplayVersion Condition="'$(TargetFramework)' == 'net10.0-android'">2.1</ApplicationDisplayVersion>
+    <ApplicationVersion Condition="'$(TargetFramework)' == 'net10.0-android'">12</ApplicationVersion>
     <WindowsPackageType>None</WindowsPackageType>
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-android'">24.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'">10.0.17763.0</SupportedOSPlatformVersion>
@@ -21,6 +24,9 @@
     <EmbeddedResource Include="WebConsole\review-deck.js" LogicalName="Whispers.ReviewDeck.js" />
     <EmbeddedResource Include="WebConsole\console-live.js" LogicalName="Whispers.ConsoleLive.js" />
     <EmbeddedResource Include="WebConsole\console.offline.css" LogicalName="Whispers.Console.css" />
+    <!-- Extra "Material" skin for the phone only. -->
+    <EmbeddedResource Condition="'$(TargetFramework)' == 'net10.0-android'" Include="WebConsole\phone-material.js" LogicalName="Whispers.PhoneMaterial.js" />
+    <EmbeddedResource Condition="'$(TargetFramework)' == 'net10.0-android'" Include="WebConsole\phone-i18n.js" LogicalName="Whispers.PhoneI18n.js" />
     <MauiIcon Condition="'$(TargetFramework)' != 'net10.0-windows10.0.19041.0'" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#050b13" />
     <!-- Windows window, taskbar and .exe use the same haunted-radio artwork as the Android launcher. -->
     <MauiIcon Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'" Include="Resources\AppIcon\whispers_windows.png" />

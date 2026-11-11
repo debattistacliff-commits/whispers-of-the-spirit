@@ -37,7 +37,7 @@ Free to download and use. Files are on the **[Releases page](https://github.com/
 | --- | --- | --- |
 | 🪟 **Windows** 10 / 11 (64-bit) | [**Whispers-of-the-Spirit-2.0-Windows-x64.zip**](https://github.com/debattistacliff-commits/whispers-of-the-spirit/releases/latest/download/Whispers-of-the-Spirit-2.0-Windows-x64.zip) | Nothing else needed. FFmpeg optional (see below). |
 | 🐧 **Linux** 64-bit PC (Ubuntu 22.04+, Debian 12+, Fedora 39+, Mint 21+) | [**Whispers-of-the-Spirit-2.0-Linux-x64.tar.gz**](https://github.com/debattistacliff-commits/whispers-of-the-spirit/releases/latest/download/Whispers-of-the-Spirit-2.0-Linux-x64.tar.gz) | A few free system packages (one command, see below). |
-| 🤖 **Android** 7.0+ | [**Whispers-of-the-Spirit-2.0-Android.apk**](https://github.com/debattistacliff-commits/whispers-of-the-spirit/releases/latest/download/Whispers-of-the-Spirit-2.0-Android.apk) | Allow installing apps from this source. |
+| 🤖 **Android** 7.0+ | [**Whispers-of-the-Spirit-2.1-Android.apk**](https://github.com/debattistacliff-commits/whispers-of-the-spirit/releases/latest/download/Whispers-of-the-Spirit-2.1-Android.apk) | Allow installing apps from this source. New in 2.1: swipe pages, languages, settings. |
 
 Check your download against [`SHA256SUMS.txt`](https://github.com/debattistacliff-commits/whispers-of-the-spirit/releases/latest/download/SHA256SUMS.txt).
 
@@ -62,7 +62,14 @@ Check your download against [`SHA256SUMS.txt`](https://github.com/debattistaclif
   - clean-up while listening: voice focus, hiss reduction, 50 Hz hum removal, click removal;
   - zoom with the mouse wheel, loop a selection, add notes as markers, save sessions,
     export the selection as WAV or MP3.
-- 🎨 **Four console skins** — Void Celestial, Military SDR-Green, Astral Nebula, Obsidian KiwiSDR.
+- 🎨 **Console skins** — Void Celestial, Military SDR-Green, Astral Nebula, Obsidian KiwiSDR,
+  and on Android also **Material** and **Ember** (charcoal and glowing orange hardware look).
+- 📱 **Made for the phone (Android 2.1)** — seven screen-sized pages you swipe through with your
+  finger, numbered page buttons, big readable text, and **Start / Rec always at the bottom**.
+  Sliders move only after a touch-and-hold, so swiping never changes a setting by accident.
+- 🌐 **Languages (Android 2.1)** — 🇬🇧 English, 🇲🇹 Malti, 🇮🇹 Italiano, 🇪🇸 Español, 🇫🇷 Français and
+  🇩🇪 Deutsch, chosen with their flags in ⚙ Settings, together with theme, text size, a
+  step-by-step *How to use* guide and *About*.
 - 🔌 **Works offline** — styles, fonts and icons are built in. Your recordings stay on your device.
 
 The original recording is never changed. Measurements show *where* speech-like sound is and
@@ -78,6 +85,15 @@ make it easier to hear; they cannot tell *who* is speaking or *where* a sound ca
 speech-like activity and pitch line:
 
 <p align="center"><img src="docs/images/review-deck.png" alt="Review deck playing a recording at half speed" width="900"></p>
+
+**On the phone (Android 2.1)** — Effects page in the Ember skin, Settings with languages and flags,
+and the Listen page in Maltese:
+
+<p align="center">
+  <img src="docs/images/phone-effects.png" alt="Phone: effects page in the Ember skin" width="260">
+  <img src="docs/images/phone-settings.png" alt="Phone: settings with language flags, theme and text size" width="260">
+  <img src="docs/images/phone-maltese.png" alt="Phone: listen page in Maltese" width="260">
+</p>
 
 ## 🛠 Install
 
@@ -103,6 +119,8 @@ Works with PulseAudio and PipeWire. .NET is included in the package.
 1. Download the APK on your phone and open it.
 2. Allow *Install unknown apps* for your browser or file manager when asked.
 3. Grant microphone permission if you want to record your questions.
+4. Swipe left and right (or tap 1–7) to move between pages; tap **⚙** for language, theme,
+   text size, the *How to use* guide and *About*. Touch and hold a slider to move it.
 
 ## 🧭 Platform differences
 
@@ -112,6 +130,7 @@ Works with PulseAudio and PipeWire. .NET is included in the package.
 | Review deck: WAV recordings, all lanes, markers, sessions | ✓ | ✓ | ✓ |
 | Review deck: slow-down | pitch kept or tape-style | pitch kept or tape-style | tape-style |
 | Review deck: clean-up while listening, MP3/FLAC import, MP3 export | with FFmpeg | with FFmpeg | — |
+| Swipe pages, ⚙ Settings, languages, Material and Ember skins | coming soon | coming soon | ✓ (2.1) |
 
 Pitch-keeping slow-down, clean-up and MP3/FLAC use the free **FFmpeg** program (with Rubber Band
 support). Without it the deck plays tape-style and says so. Android has no FFmpeg.

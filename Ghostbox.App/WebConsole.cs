@@ -18,6 +18,11 @@ public partial class MainPage
         // which locates the original controls by position.
         html = html.Replace("</body>", "<script>window.__installWhispersLive=function(){" + Resource("Whispers.ConsoleLive.js") +
             "\n};window.__installWhispersDeck=function(){" + Resource("Whispers.ReviewDeck.js") + "\n};</script></body>");
+        // The "Material" skin is embedded only in the Android build; other builds skip it.
+        string? phoneSkin = OptionalResource("Whispers.PhoneMaterial.js");
+        if (phoneSkin is not null) phoneSkin = (OptionalResource("Whispers.PhoneI18n.js") ?? "") + "\n" + phoneSkin;
+        if (phoneSkin is not null)
+            html = html.Replace("</body>", "<script>window.__installWhispersPhone=function(){" + phoneSkin + "\n};</script></body>");
         consoleWebView = new WebView
         {
             Source = new HtmlWebViewSource { Html = html },
@@ -32,6 +37,9 @@ public partial class MainPage
             catch (Exception ex) { ShowError("Console wiring: " + ex.Message); }
             try { await consoleWebView.EvaluateJavaScriptAsync("window.__installWhispersDeck && window.__installWhispersDeck()"); }
             catch (Exception ex) { ShowError("Review deck: " + ex.Message); }
+            if (phoneSkin is not null)
+                try { await consoleWebView.EvaluateJavaScriptAsync("window.__installWhispersPhone && window.__installWhispersPhone()"); }
+                catch (Exception ex) { ShowError("Material skin: " + ex.Message); }
         };
 
 
@@ -204,6 +212,14 @@ public partial class MainPage
     {
         using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name)
             ?? throw new InvalidOperationException("The embedded console file " + name + " is missing.");
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
+
+    static string? OptionalResource(string name)
+    {
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+        if (stream is null) return null;
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
