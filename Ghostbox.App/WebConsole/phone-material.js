@@ -519,7 +519,7 @@
         '<p class="note">💡 ' + esc(t.tip) + '</p></section>' +
       '<section class="about"><h3>ℹ️ ' + esc(t.about) + '</h3>' +
         '<div class="brand">WHISPERS OF THE SPIRIT</div>' +
-        '<dl><dt>' + esc(t.version) + '</dt><dd>2.1 · Android</dd>' +
+        '<dl><dt>' + esc(t.version) + '</dt><dd>2.2 · Android</dd>' +
         '<dt>' + esc(t.author) + '</dt><dd>debattistacliff-commits</dd>' +
         '<dt>©</dt><dd>© 2026 debattistacliff-commits. ' + esc(t.rights) + '</dd>' +
         '<dt>' + esc(t.source) + '</dt><dd>github.com/debattistacliff-commits/whispers-of-the-spirit</dd></dl>' +
